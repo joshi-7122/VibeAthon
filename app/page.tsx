@@ -89,30 +89,24 @@ const phases = [
 export default function Page() {
   return <main className="stark-page"><div className="pointer-events-none fixed inset-0 z-50 opacity-[0.035] scanlines" aria-hidden="true" /><header className="stark-shell stark-header"><a href="#top" className="logo-lockup"><img src="/vibathon-logo.png" alt="VIBATHON" /><span>VIBATHON // ONLINE</span></a><div className="hidden font-mono text-[10px] tracking-[0.28em] text-[#8b9aa6] md:block">WAR MACHINE / MARK II / MARK L / MARK I / MARK XLII</div><a href="#tracks" className="stark-link">[ ACCESS FILES ]</a></header>
     <section id="top" className="stark-shell stark-hero relative overflow-hidden min-h-[660px] md:min-h-[720px] flex flex-col justify-center">
-      {/* Dynamic Cyber Video Background Frame */}
+      {/* Armory Hall Photo Backdrop */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          preload="auto"
-          onCanPlay={(e) => e.currentTarget.play()}
-          className="w-full h-full object-cover object-center md:object-[70%_center] opacity-85 filter contrast-110 brightness-100 scale-100 transform-gpu"
-        >
-          <source src="/videos/1790183415100607.mp4" type="video/mp4" />
-        </video>
-        {/* Left Side Subtle Shadow Overlay for text contrast */}
+        <img
+          src="/hero-armory.jpg"
+          alt="Stark Armory Hall"
+          className="w-full h-full object-cover object-center filter brightness-105 contrast-110 opacity-75"
+        />
+        {/* Dark Gradient Overlay for text contrast */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(90deg, rgba(5,7,8,0.85) 0%, rgba(5,7,8,0.50) 45%, rgba(5,7,8,0.15) 80%, rgba(5,7,8,0.05) 100%)',
+              'linear-gradient(105deg, rgba(5,7,8,0.92) 0%, rgba(5,7,8,0.72) 45%, rgba(5,7,8,0.38) 75%, rgba(5,7,8,0.18) 100%)',
           }}
         />
-        {/* Seamless Top & Bottom Frame Fades */}
+        {/* Top & Bottom Seamless Fades */}
         <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#050708] to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#050708] via-[#050708]/60 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#050708] via-[#050708]/80 to-transparent" />
       </div>
       <div className="absolute inset-y-0 right-0 w-full lg:w-1/2 z-0 flex items-center justify-center lg:justify-end pointer-events-none overflow-hidden pr-0 lg:pr-6"><img src="/hero-hologram.png" alt="Iron Man Cyan Hologram (Transparent)" className="h-[88%] md:h-[95%] w-auto max-w-full object-contain filter brightness-110 contrast-110 drop-shadow-[0_0_40px_rgba(0,173,239,0.5)] mix-blend-screen opacity-100" /></div><div className="relative z-10 flex flex-col items-start w-full max-w-2xl py-12 md:py-16"><div className="hero-kicker" aria-label="TRANSMISSION 001 // PROTOCOL OVERRIDE">TRANSMISSION 001 <span>//</span> PROTOCOL OVERRIDE</div><h1 className="glitch stark-title"><span className="glitch-word">OVERRIDE</span><br /><em>THE PROTOCOL.</em></h1><p className="hero-manifesto">Think It. Prompt It. Build It.</p><a href="#tracks" className="stark-cta mt-8">INITIALIZE UPLINK <ArrowUpRight data-icon="inline-end" /></a><div className="hero-readout mt-8"><span>ARC REACTOR STATUS</span><strong>100%</strong><i /></div></div></section>
     <section className="stark-shell stats-grid" aria-label="Event statistics"><div><strong>14,000,605</strong><span>SIMULATIONS</span></div><div><strong>5</strong><span>CORE A.I. TRACKS</span></div><div><strong>24</strong><span>HOURS TO COMPILE</span></div><div><strong>∞</strong><span>STARK GRANTS POOL</span></div></section>
