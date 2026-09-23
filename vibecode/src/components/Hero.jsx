@@ -10,27 +10,30 @@ export function Hero() {
 
   return (
     <section id="top" className="stark-shell stark-hero relative overflow-hidden min-h-[660px] md:min-h-[720px] flex flex-col justify-center">
-      {/* Armory hall backdrop */}
-      <div className="absolute inset-0 z-0 pointer-events-none" aria-hidden="true">
-        <img
-          src="/hero-armory.jpg"
-          alt=""
-          className="w-full h-full object-cover object-center"
-          style={{ opacity: 0.55 }}
-        />
-        {/* Dark gradient: heavy on left (text side), lighter on right */}
+      {/* Dynamic Cyber Video Backdrop */}
+      <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          preload="auto"
+          onCanPlay={(e) => e.currentTarget.play()}
+          className="w-full h-full object-cover object-center md:object-[70%_center] opacity-85 filter contrast-110 brightness-100 scale-100 transform-gpu"
+        >
+          <source src="/videos/1790183415100607.mp4" type="video/mp4" />
+        </video>
+        {/* Left Side Subtle Shadow Overlay for text contrast */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(105deg, rgba(5,7,8,0.92) 0%, rgba(5,7,8,0.72) 45%, rgba(5,7,8,0.38) 75%, rgba(5,7,8,0.18) 100%)',
+              'linear-gradient(90deg, rgba(5,7,8,0.85) 0%, rgba(5,7,8,0.50) 45%, rgba(5,7,8,0.15) 80%, rgba(5,7,8,0.05) 100%)',
           }}
         />
-        {/* Bottom fade to page bg */}
-        <div
-          className="absolute inset-x-0 bottom-0 h-32"
-          style={{ background: 'linear-gradient(to bottom, transparent, #050708)' }}
-        />
+        {/* Seamless Top & Bottom Frame Fades */}
+        <div className="absolute inset-x-0 top-0 h-20 bg-gradient-to-b from-[#050708] to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-28 bg-gradient-to-t from-[#050708] via-[#050708]/60 to-transparent" />
       </div>
 
 
