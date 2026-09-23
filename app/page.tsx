@@ -1,7 +1,42 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import { ArrowUpRight, Bot, Cpu, Shield, Zap } from 'lucide-react'
+
+function ScrollBackdrop({ src, alt }: { src: string; alt: string }) {
+  const [isVisible, setIsVisible] = useState(false)
+  const containerRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const node = containerRef.current
+    if (!node) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsVisible(entry.isIntersecting)
+      },
+      { threshold: 0.15 }
+    )
+
+    observer.observe(node)
+    return () => observer.disconnect()
+  }, [])
+
+  return (
+    <div ref={containerRef} className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+      <img
+        src={src}
+        alt={alt}
+        className={`w-full h-full object-cover object-center filter contrast-125 brightness-90 transition-all duration-1000 ease-out transform-gpu ${
+          isVisible ? 'opacity-55 scale-100 blur-0' : 'opacity-0 scale-110 blur-sm'
+        }`}
+      />
+      {/* Vignette & Gradient Overlays for UI contrast */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#050708] via-[#050708]/80 to-[#050708]" />
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_0%,rgba(5,7,8,0.85)_100%)]" />
+    </div>
+  )
+}
 
 function TrackCard({ name, image, category, detail, Icon }: { name: string; image: string; category: string; detail: string; Icon: typeof Bot }) {
   return (
@@ -110,7 +145,13 @@ export default function Page() {
       </div>
       <div className="absolute inset-y-0 right-0 w-full lg:w-1/2 z-0 flex items-center justify-center lg:justify-end pointer-events-none overflow-hidden pr-0 lg:pr-6"><img src="/hero-hologram.png" alt="Iron Man Cyan Hologram (Transparent)" className="h-[88%] md:h-[95%] w-auto max-w-full object-contain filter brightness-110 contrast-110 drop-shadow-[0_0_40px_rgba(0,173,239,0.5)] mix-blend-screen opacity-100" /></div><div className="relative z-10 flex flex-col items-start w-full max-w-2xl py-12 md:py-16"><div className="hero-kicker" aria-label="TRANSMISSION 001 // PROTOCOL OVERRIDE">TRANSMISSION 001 <span>//</span> PROTOCOL OVERRIDE</div><h1 className="glitch stark-title"><span className="glitch-word">OVERRIDE</span><br /><em>THE PROTOCOL.</em></h1><p className="hero-manifesto">Think It. Prompt It. Build It.</p><a href="#tracks" className="stark-cta mt-8">INITIALIZE UPLINK <ArrowUpRight data-icon="inline-end" /></a><div className="hero-readout mt-8"><span>ARC REACTOR STATUS</span><strong>100%</strong><i /></div></div></section>
     <section className="stark-shell stats-grid" aria-label="Event statistics"><div><strong>14,000,605</strong><span>SIMULATIONS</span></div><div><strong>5</strong><span>CORE A.I. TRACKS</span></div><div><strong>24</strong><span>HOURS TO COMPILE</span></div><div><strong>∞</strong><span>STARK GRANTS POOL</span></div></section>
-    <section id="tracks" className="stark-shell stark-section"><div className="section-heading"><div><p className="section-label">// BOUNTIES / R&D OPERATIONS</p><h2>CHOOSE YOUR<br /><span>INTELLIGENCE.</span></h2></div><p className="section-note">Five specialized tracks. One mission.<br />Build what comes next.</p></div><div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5 xl:gap-6">{tracks.map(([name, image, category, detail, Icon]) => <TrackCard key={name as string} name={name as string} image={image as string} category={category as string} detail={detail as string} Icon={Icon} />)}</div></section>
+    <section id="tracks" className="stark-shell stark-section relative overflow-hidden">
+      <ScrollBackdrop src="/stark-lab-backdrop.jpg" alt="Stark Armor Lab Backdrop" />
+      <div className="relative z-10">
+        <div className="section-heading"><div><p className="section-label">// BOUNTIES / R&D OPERATIONS</p><h2>CHOOSE YOUR<br /><span>INTELLIGENCE.</span></h2></div><p className="section-note">Five specialized tracks. One mission.<br />Build what comes next.</p></div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4 sm:gap-5 xl:gap-6">{tracks.map(([name, image, category, detail, Icon]) => <TrackCard key={name as string} name={name as string} image={image as string} category={category as string} detail={detail as string} Icon={Icon} />)}</div>
+      </div>
+    </section>
     <section className="stark-shell stark-section build-section"><div className="section-heading"><div><p className="section-label">// THE BUILD PLAN</p><h2>COMPILE.<br /><span>DEPLOY.</span></h2></div><p className="section-note">The armor comes together<br />one phase at a time.</p></div><div className="timeline">{phases.map(([phase, title, detail], index) => <div className="phase" key={phase}><span className="phase-number">0{index + 1}</span><div><p>{phase as string}</p><h3>{title as string}</h3><span>{detail as string}</span></div></div>)}</div></section>
     <footer className="stark-shell stark-footer"><span>VIBATHON © 2026 / STARK R&D NETWORK</span><a href="#top">RETURN TO SYSTEM <ArrowUpRight data-icon="inline-end" /></a></footer>
   </main>
