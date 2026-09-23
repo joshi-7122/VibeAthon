@@ -5,41 +5,80 @@ import { HACKATHON_DATA } from '../data/hackathon'
 import { useTypewriter } from '../hooks/useTypewriter'
 import { useStarkAudio } from '../hooks/useStarkAudio'
 
-// Muted autoplay needs the `muted` *attribute* on iOS Safari (React only sets
-// the property). If the device still blocks playback (e.g. iPhone Low Power
-// Mode, data saver), start the video on the visitor's first interaction.
-function playBackdrop(video) {
+// Events that count as a real user gesture in every browser (Safari ignores
+// scroll and touchstart for this), used to start playback if autoplay is blocked.
+const GESTURE_EVENTS = ['click', 'touchend', 'pointerup', 'keydown']
+
+// Muted, inline playback is what every browser allows to autoplay. React only
+// sets `muted` as a property, but iOS/macOS Safari check the attributes too.
+function prepareVideo(video) {
   if (!video) return
   video.muted = true
   video.defaultMuted = true
   video.setAttribute('muted', '')
+  video.setAttribute('playsinline', '')
+  video.setAttribute('webkit-playsinline', '')
+}
+
+// Try to play; if the browser blocks it (Low Power Mode, data saver, Safari
+// "Never Auto-Play"), keep retrying on each user gesture until it succeeds.
+// Returns a cleanup function that removes any pending retry listeners.
+function playBackdrop(video) {
+  if (!video) return () => {}
+  prepareVideo(video)
+  let removeListeners = () => {}
   video.play().catch(() => {
-    const events = ['pointerdown', 'touchstart', 'keydown', 'scroll']
     const retry = () => {
-      events.forEach((e) => window.removeEventListener(e, retry))
-      video.play().catch(() => {})
+      video.play().then(() => removeListeners(), () => {})
     }
-    events.forEach((e) => window.addEventListener(e, retry, { once: true, passive: true }))
+    GESTURE_EVENTS.forEach((e) => window.addEventListener(e, retry, { passive: true }))
+    removeListeners = () => GESTURE_EVENTS.forEach((e) => window.removeEventListener(e, retry))
   })
+  return () => removeListeners()
 }
 
 export function Hero({ introDone = true }) {
   const videoRef = useRef(null)
   const loopRef = useRef(null)
+  const cleanupsRef = useRef([])
   const [loopPlaying, setLoopPlaying] = useState(false)
   const { displayText } = useTypewriter(HACKATHON_DATA.kicker, 35, 100)
   const { playRepulsorHover } = useStarkAudio()
 
+  const startLoop = () => cleanupsRef.current.push(playBackdrop(loopRef.current))
+
+  // Mark both videos muted/inline before they load, and clean up on unmount
+  useEffect(() => {
+    prepareVideo(videoRef.current)
+    prepareVideo(loopRef.current)
+    const cleanups = cleanupsRef.current
+    return () => cleanups.forEach((fn) => fn())
+  }, [])
+
   // Play the intro video once, after the suit-up intro has cleared,
   // then crossfade to the HUD video, which loops for the rest of the visit.
   useEffect(() => {
-    if (introDone) playBackdrop(videoRef.current)
+    if (introDone) cleanupsRef.current.push(playBackdrop(videoRef.current))
   }, [introDone])
+
+  // Browsers pause silent videos in background tabs and don't always resume;
+  // pick up where we left off when the tab becomes visible again.
+  useEffect(() => {
+    const onVisible = () => {
+      if (document.visibilityState !== 'visible') return
+      const first = videoRef.current
+      if (loopPlaying) loopRef.current?.play().catch(() => {})
+      else if (introDone && first && !first.ended) first.play().catch(() => {})
+    }
+    document.addEventListener('visibilitychange', onVisible)
+    return () => document.removeEventListener('visibilitychange', onVisible)
+  }, [introDone, loopPlaying])
 
   return (
     <section id="top" className="stark-shell stark-hero relative overflow-hidden min-h-[660px] md:min-h-[720px] aspect-video flex flex-col justify-center">
       {/* Backdrop: intro video plays once, then the HUD video loops.
-          The intro video holds its last frame until the loop is actually playing.
+          The intro video holds its last frame until the loop is actually playing,
+          and shows a poster frame if the browser won't play video at all.
           The section keeps a 16:9 shape and the videos use object-contain,
           so the full frame is always visible (no cropping). */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
@@ -51,16 +90,18 @@ export function Hero({ introDone = true }) {
           playsInline
           preload="auto"
           onPlaying={() => setLoopPlaying(true)}
-          className={`absolute inset-0 w-full h-full object-contain object-center filter brightness-105 contrast-110 transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-75' : 'opacity-0'}`}
+          className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-75' : 'opacity-0'}`}
         />
         <video
           src="/videos/hero-bg.mp4"
+          poster="/videos/hero-poster.jpg"
           ref={videoRef}
           muted
           playsInline
           preload="auto"
-          onEnded={() => playBackdrop(loopRef.current)}
-          className={`absolute inset-0 w-full h-full object-contain object-center filter brightness-105 contrast-110 transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-0' : 'opacity-75'}`}
+          onEnded={startLoop}
+          onError={startLoop}
+          className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-0' : 'opacity-75'}`}
         />
         {/* Dark gradient overlay */}
         <div

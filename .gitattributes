@@ -1,5 +1,7 @@
 * text=auto
 *.bat text eol=crlf
+*.sh text eol=lf
+*.command text eol=lf
 *.mp4 binary
 *.jpg binary
 *.png binary

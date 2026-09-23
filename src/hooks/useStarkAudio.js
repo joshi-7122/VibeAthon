@@ -7,6 +7,10 @@ export function useStarkAudio() {
     if (!audioCtxRef.current) {
       audioCtxRef.current = new (window.AudioContext || window.webkitAudioContext)()
     }
+    // Safari and Chrome start the context suspended until a user gesture
+    if (audioCtxRef.current.state === 'suspended') {
+      audioCtxRef.current.resume().catch(() => {})
+    }
     return audioCtxRef.current
   }, [])
 
