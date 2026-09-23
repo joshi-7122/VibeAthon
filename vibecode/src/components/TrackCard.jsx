@@ -15,6 +15,7 @@ export function TrackCard({ track }) {
         </div>
       )}
 
+
       {/* Subtle Sci-Fi Cyber Grid Background */}
       <div
         className="absolute inset-0 bg-[linear-gradient(rgba(0,173,239,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(0,173,239,0.035)_1px,transparent_1px)] bg-[size:24px_24px] pointer-events-none opacity-60 group-hover:opacity-90 transition-opacity duration-500"
