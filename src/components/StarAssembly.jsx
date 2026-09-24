@@ -32,6 +32,13 @@ const crewMembers = [
     photo: '/atharav-id.jpg'
   },
   {
+    id: '009',
+    name: 'KRITIKA JHA',
+    role: 'MARK-XLIX',
+    idCard: '/kritika-id.jpg',
+    photo: '/kritika-id.jpg'
+  },
+  {
     id: '006',
     name: 'ARNAV MAITREY',
     role: 'MARK-XXVI',
@@ -51,13 +58,6 @@ const crewMembers = [
     role: 'MARK-XXVII',
     idCard: '/aryan-id.jpg',
     photo: '/aryan-id.jpg'
-  },
-  {
-    id: '009',
-    name: 'KRITIKA JHA',
-    role: 'MARK-XLIX',
-    idCard: '/kritika-id.jpg',
-    photo: '/kritika-id.jpg'
   },
   {
     id: '010',

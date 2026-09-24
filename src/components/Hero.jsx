@@ -21,55 +21,56 @@ function prepareVideo(video) {
 }
 
 // Try to play; if the browser blocks it (Low Power Mode, data saver, Safari
-// "Never Auto-Play"), keep retrying on each user gesture until it succeeds.
-// Returns a cleanup function that removes any pending retry listeners.
+// "Never Auto-Play"), it will fail silently and show the poster frame.
 function playBackdrop(video) {
   if (!video) return () => {}
   prepareVideo(video)
-  let removeListeners = () => {}
-  video.play().catch(() => {
-    const retry = () => {
-      video.play().then(() => removeListeners(), () => {})
-    }
-    GESTURE_EVENTS.forEach((e) => window.addEventListener(e, retry, { passive: true }))
-    removeListeners = () => GESTURE_EVENTS.forEach((e) => window.removeEventListener(e, retry))
-  })
-  return () => removeListeners()
+  video.play().catch(() => {})
+  return () => {}
 }
 
 export function Hero({ introDone = true }) {
   const videoRef = useRef(null)
   const loopRef = useRef(null)
-  const cleanupsRef = useRef([])
-  const [loopPlaying, setLoopPlaying] = useState(false)
   const [bgVideoFinished, setBgVideoFinished] = useState(false)
   
   const { displayText } = useTypewriter(bgVideoFinished ? HACKATHON_DATA.kicker : '', 35, 100)
   const { playRepulsorHover } = useStarkAudio()
 
-  const startLoop = () => cleanupsRef.current.push(playBackdrop(loopRef.current))
+  // Aggressive initialization: Force muted attributes and play immediately on mount 
+  // to bypass Safari's 1-second programmatic autoplay block without using the autoPlay prop
+  // which causes the ugly native play button overlay.
+  const initVideo = (node, isLoop) => {
+    if (node) {
+      if (isLoop) loopRef.current = node
+      else videoRef.current = node
 
-  // Mark both videos muted/inline before they load, and clean up on unmount
-  useEffect(() => {
-    prepareVideo(videoRef.current)
-    prepareVideo(loopRef.current)
-    const cleanups = cleanupsRef.current
-    return () => cleanups.forEach((fn) => fn())
-  }, [])
+      node.defaultMuted = true
+      node.muted = true
+      node.setAttribute('muted', '')
+      node.setAttribute('playsinline', '')
+      node.setAttribute('webkit-playsinline', '')
+      
+      // Start playing instantly in the background during the 4s intro
+      node.play().catch(() => {})
+    }
+  }
 
   // Play the intro video once, after the suit-up intro has cleared
   useEffect(() => {
     if (introDone && videoRef.current) {
-      videoRef.current.currentTime = 0; // Ensure it starts from the beginning when revealed
-      cleanupsRef.current.push(playBackdrop(videoRef.current))
+      // The video has been playing silently in the background for 4s.
+      // Reset it to 0 so the user doesn't miss the start.
+      videoRef.current.currentTime = 0;
+      videoRef.current.play().catch(() => {})
     }
   }, [introDone])
 
   // Play loop video after background video finishes and text animations are done
   useEffect(() => {
-    if (bgVideoFinished) {
+    if (bgVideoFinished && loopRef.current) {
       const timer = setTimeout(() => {
-        startLoop()
+        loopRef.current.play().catch(() => {})
       }, 1500)
       return () => clearTimeout(timer)
     }
@@ -81,44 +82,36 @@ export function Hero({ introDone = true }) {
     const onVisible = () => {
       if (document.visibilityState !== 'visible') return
       const first = videoRef.current
-      if (loopPlaying) loopRef.current?.play().catch(() => {})
+      if (bgVideoFinished) loopRef.current?.play().catch(() => {})
       else if (introDone && first && !first.ended) first.play().catch(() => {})
     }
     document.addEventListener('visibilitychange', onVisible)
     return () => document.removeEventListener('visibilitychange', onVisible)
-  }, [introDone, loopPlaying])
+  }, [introDone, bgVideoFinished])
 
   return (
     <section id="top" className="stark-shell stark-hero relative overflow-hidden min-h-[660px] md:min-h-[720px] aspect-video flex flex-col justify-center">
-      {/* Backdrop: intro video plays once, then the HUD video loops.
-          The intro video holds its last frame until the loop is actually playing,
-          and shows a poster frame if the browser won't play video at all.
-          The section keeps a 16:9 shape and the videos use object-contain,
-          so the full frame is always visible (no cropping). */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <video
           src="/videos/hero-loop.mp4"
-          ref={loopRef}
+          ref={(node) => initVideo(node, true)}
           muted
-          autoPlay
           loop
           playsInline
           preload="auto"
-          onPlaying={() => setLoopPlaying(true)}
           style={{ transform: 'scaleX(-1)' }}
-          className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-75' : 'opacity-0'}`}
+          className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${bgVideoFinished ? 'opacity-75' : 'opacity-0'}`}
         />
         <video
           src="/videos/hero-bg.mp4"
           poster="/videos/hero-poster.jpg"
-          ref={videoRef}
+          ref={(node) => initVideo(node, false)}
           muted
-          autoPlay
           playsInline
           preload="auto"
           onEnded={() => setBgVideoFinished(true)}
           onError={() => setBgVideoFinished(true)}
-          className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-0' : 'opacity-75'}`}
+          className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${bgVideoFinished ? 'opacity-0' : 'opacity-75'}`}
         />
         {/* Dark gradient overlay */}
         <div
