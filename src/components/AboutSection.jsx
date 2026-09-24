@@ -5,28 +5,25 @@ import { LaunchCountdown } from './LaunchCountdown'
 export function AboutSection() {
   return (
     <section id="about" className="stark-shell stark-section relative overflow-hidden">
-      {/* Iron Man Suit-Up Video Backdrop */}
+      {/* JARVIS HUD Backdrop */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
-        <video
-          src="/videos/suitup2.mp4"
-          autoPlay
-          muted
-          loop
-          playsInline
-          className="w-full h-full object-cover object-center opacity-65"
+        <img
+          src="/about-jarvis-hud.jpg"
+          alt=""
+          className="w-full h-full object-cover object-center opacity-50"
         />
         {/* Darken so the text and cards stay readable */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              'radial-gradient(ellipse at center, rgba(5,7,8,0.35) 0%, rgba(5,7,8,0.55) 70%, rgba(5,7,8,0.80) 100%)',
+              'radial-gradient(ellipse at center, rgba(5,7,8,0.5) 0%, rgba(5,7,8,0.75) 70%, rgba(5,7,8,0.92) 100%)',
           }}
         />
         {/* Fade top and bottom edges into the page */}
         <div
           className="absolute inset-0"
-          style={{ background: 'linear-gradient(to bottom, #050708 0%, transparent 20%, transparent 80%, #050708 100%)' }}
+          style={{ background: 'linear-gradient(to bottom, #050708 0%, transparent 18%, transparent 82%, #050708 100%)' }}
         />
       </div>
 

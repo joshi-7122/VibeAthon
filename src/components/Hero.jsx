@@ -119,6 +119,7 @@ export function Hero({ introDone = true }) {
           playsInline
           preload="auto"
           onPlaying={() => setLoopPlaying(true)}
+          // Mirrored horizontally so the HUD graphics sit away from the headline
           style={{ transform: 'scaleX(-1)' }}
           className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-75' : 'opacity-0'}`}
         />
