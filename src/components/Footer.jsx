@@ -1,6 +1,26 @@
 import { useEffect, useRef, useState } from 'react'
 import { useInView } from 'framer-motion'
 import { ArrowUp, ExternalLink, Mail, MapPin, Phone } from 'lucide-react'
+
+function LinkedinIcon({ className }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+      <rect width="4" height="12" x="2" y="9" />
+      <circle cx="4" cy="4" r="2" />
+    </svg>
+  )
+}
+
+function InstagramIcon({ className }) {
+  return (
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+      <rect width="20" height="20" x="2" y="2" rx="5" ry="5" />
+      <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z" />
+      <line x1="17.5" x2="17.51" y1="6.5" y2="6.5" />
+    </svg>
+  )
+}
 import { HACKATHON_DATA } from '../data/hackathon'
 import { scrollToSection, useActiveSection } from '../hooks/useActiveSection'
 import { LogoFlyIn } from './LogoFlyIn'
@@ -10,60 +30,36 @@ import './Footer.css'
 const QUICK_LINKS = HACKATHON_DATA.sections.filter((section) => section.id !== 'contact')
 const SECTION_IDS = HACKATHON_DATA.sections.map((section) => section.id)
 
-const LAUNCH = new Date(HACKATHON_DATA.launchDate).getTime()
-const END = LAUNCH + HACKATHON_DATA.durationHours * 3600 * 1000
-const LAUNCH_LABEL = new Intl.DateTimeFormat('en-IN', {
-  day: '2-digit',
-  month: 'short',
-  year: 'numeric',
-  hour: '2-digit',
-  minute: '2-digit',
-  hour12: false,
-  timeZone: 'Asia/Kolkata',
-}).format(LAUNCH) + ' IST'
-
-function formatSpan(ms) {
-  const mins = Math.max(0, Math.floor(ms / 60000))
-  const d = Math.floor(mins / 1440)
-  const h = Math.floor((mins % 1440) / 60)
-  const m = mins % 60
-  if (d > 0) return `${d}d ${h}h`
-  if (h > 0) return `${h}h ${m}m`
-  return `${m}m`
-}
-
-// Live mission status, driven by the event dates in the site data
-function MissionStatus() {
-  const [now, setNow] = useState(() => Date.now())
-  useEffect(() => {
-    const id = setInterval(() => setNow(Date.now()), 30000)
-    return () => clearInterval(id)
-  }, [])
-
-  const phase = now < LAUNCH ? 'countdown' : now < END ? 'live' : 'complete'
-  const value =
-    phase === 'countdown' ? `T-minus ${formatSpan(LAUNCH - now)}`
-      : phase === 'live' ? `Live · ${formatSpan(END - now)} left`
-        : 'Mission complete'
-  const detail = phase === 'complete' ? 'See you at the next build' : LAUNCH_LABEL
-
+function SocialLinks() {
   return (
-    <a
-      href="#about"
-      className={`mission-status mission-status--${phase}`}
-      onClick={(e) => scrollToSection('about', e)}
-      aria-label={`Mission status: ${value}. ${detail}`}
-    >
-      <span className="mission-status__reactor" aria-hidden="true">
-        <span className="mission-status__ring" />
-        <span className="mission-status__core" />
-      </span>
-      <span className="mission-status__text">
-        <span className="mission-status__label">// Mission Status</span>
-        <span className="mission-status__value">{value}</span>
-        <span className="mission-status__detail">{detail}</span>
-      </span>
-    </a>
+    <div className="flex flex-col gap-3 mt-6">
+      <a
+        href="https://www.linkedin.com/company/ieee-gu-cis/posts/?feedView=all"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-3 px-4 py-2 border border-[#00ADEF]/30 bg-[#00ADEF]/10 hover:bg-[#00ADEF]/20 text-[#00ADEF] transition-all hover:border-[#00ADEF]/60"
+        style={{
+          clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))'
+        }}
+        aria-label="LinkedIn"
+      >
+        <LinkedinIcon className="w-5 h-5" />
+        <span className="font-mono text-xs font-bold tracking-widest uppercase">LINKEDIN</span>
+      </a>
+      <a
+        href="https://www.instagram.com/ieeecis.gusb?stkn=c3I3bWNxbHM1azVy"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="inline-flex items-center gap-3 px-4 py-2 border border-[#00ADEF]/30 bg-[#00ADEF]/10 hover:bg-[#00ADEF]/20 text-[#00ADEF] transition-all hover:border-[#00ADEF]/60"
+        style={{
+          clipPath: 'polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px))'
+        }}
+        aria-label="Instagram"
+      >
+        <InstagramIcon className="w-5 h-5" />
+        <span className="font-mono text-xs font-bold tracking-widest uppercase">INSTAGRAM</span>
+      </a>
+    </div>
   )
 }
 
@@ -96,7 +92,7 @@ export function Footer() {
           <p className="site-footer__organizers">
             Organized by <span>{contact.organizers}</span>
           </p>
-          <MissionStatus />
+          <SocialLinks />
         </div>
 
         {/* Quick links */}

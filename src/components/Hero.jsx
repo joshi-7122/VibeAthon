@@ -5,9 +5,6 @@ import { HACKATHON_DATA } from '../data/hackathon'
 import { useTypewriter } from '../hooks/useTypewriter'
 import { useStarkAudio } from '../hooks/useStarkAudio'
 
-// Events that count as a real user gesture in every browser (Safari ignores
-// scroll and touchstart for this), used to start playback if autoplay is blocked.
-const GESTURE_EVENTS = ['click', 'touchend', 'pointerup', 'keydown']
 
 // Muted, inline playback is what every browser allows to autoplay. React only
 // sets `muted` as a property, but iOS/macOS Safari check the attributes too.
@@ -20,22 +17,13 @@ function prepareVideo(video) {
   video.setAttribute('webkit-playsinline', '')
 }
 
-// Try to play; if the browser blocks it (Low Power Mode, data saver, Safari
-// "Never Auto-Play"), keep retrying on each user gesture until it succeeds.
-// Returns a cleanup function that removes any pending retry listeners.
 function playBackdrop(video, onBlocked) {
   if (!video) return () => {}
   prepareVideo(video)
-  let removeListeners = () => {}
   video.play().catch(() => {
     onBlocked?.()
-    const retry = () => {
-      video.play().then(() => removeListeners(), () => {})
-    }
-    GESTURE_EVENTS.forEach((e) => window.addEventListener(e, retry, { passive: true }))
-    removeListeners = () => GESTURE_EVENTS.forEach((e) => window.removeEventListener(e, retry))
   })
-  return () => removeListeners()
+  return () => {}
 }
 
 // Theme audio that plays alongside the first hero video (it runs ~6.5s, so
@@ -66,23 +54,14 @@ export function Hero({ introDone = true }) {
     return audio.play()
   }
 
-  // Start with the first video. Browsers block sound until the visitor has
-  // interacted with the page, so if that happens, start on their first
-  // click/key press, lined up with where the video has got to.
+  // Start with the first video. If the browser blocks sound until interaction,
+  // we just let it fail silently instead of retrying on click.
   const startAudio = () => {
     if (audioStartedRef.current) return
     audioStartedRef.current = true
     videoStartRef.current = performance.now()
     playAudioFrom(0).catch(() => {
-      const remove = () => GESTURE_EVENTS.forEach((e) => window.removeEventListener(e, retry))
-      const retry = () => {
-        remove()
-        const elapsed = (performance.now() - videoStartRef.current) / 1000
-        const audio = audioRef.current
-        if (audio && elapsed < audio.duration - 0.5) playAudioFrom(elapsed).catch(() => {})
-      }
-      GESTURE_EVENTS.forEach((e) => window.addEventListener(e, retry, { passive: true }))
-      cleanupsRef.current.push(remove)
+      // Just fail if browser blocks autoplay
     })
   }
 
@@ -140,7 +119,6 @@ export function Hero({ introDone = true }) {
           playsInline
           preload="auto"
           onPlaying={() => setLoopPlaying(true)}
-          // Mirrored horizontally so the HUD graphics sit away from the headline
           style={{ transform: 'scaleX(-1)' }}
           className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-75' : 'opacity-0'}`}
         />

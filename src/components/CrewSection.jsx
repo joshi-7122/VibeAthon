@@ -57,15 +57,8 @@ function initials(name) {
     .toUpperCase()
 }
 
-function CrewCard({ member, index, flipped, onToggle, decorative }) {
+function CrewCard({ member, index, flipped, onHover, onLeave, decorative }) {
   const unit = String(index + 1).padStart(2, '0')
-
-  const handleKeyDown = (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault()
-      onToggle()
-    }
-  }
 
   return (
     <motion.article
@@ -75,12 +68,12 @@ function CrewCard({ member, index, flipped, onToggle, decorative }) {
       whileInView={{ opacity: 1, y: 0, scale: 1 }}
       viewport={{ once: true, amount: 0.2 }}
       transition={{ duration: 0.6, delay: Math.min(index, 5) * 0.08, ease: 'easeOut' }}
-      onClick={onToggle}
-      onKeyDown={decorative ? undefined : handleKeyDown}
-      role={decorative ? undefined : 'button'}
+      onMouseEnter={onHover}
+      onMouseLeave={onLeave}
+      onFocus={decorative ? undefined : onHover}
+      onBlur={decorative ? undefined : onLeave}
       tabIndex={decorative ? -1 : 0}
-      aria-pressed={decorative ? undefined : flipped}
-      aria-label={decorative ? undefined : `${member.name}, ${member.suit}. ${flipped ? 'Show armor card' : 'Show photo'}`}
+      aria-label={decorative ? undefined : `${member.name}, ${member.suit}.`}
     >
       <div className="crew-card__inner">
         {/* Front: armor card */}
@@ -101,7 +94,7 @@ function CrewCard({ member, index, flipped, onToggle, decorative }) {
             </h3>
             <p className="crew-card__role">
               <span className="crew-card__dot" aria-hidden="true" />
-              Tap to reveal pilot
+              Hover to reveal pilot
             </p>
           </div>
         </div>
@@ -172,7 +165,7 @@ export function CrewSection() {
           <span className="marks-heading__line marks-heading__line--steel">MARKS.</span>
         </h2>
         <p className="marks-heading__note">
-          The armored squad behind VIBEATHON. Tap a card to meet the pilot inside.
+          The armored squad behind VIBEATHON. Hover over a card to meet the pilot inside.
         </p>
       </motion.div>
 
@@ -190,7 +183,8 @@ export function CrewSection() {
                     member={member}
                     index={i}
                     flipped={flippedKey === key}
-                    onToggle={() => toggle(key)}
+                    onHover={() => setFlippedKey(key)}
+                    onLeave={() => setFlippedKey(null)}
                     decorative={copy === 1}
                   />
                 </div>

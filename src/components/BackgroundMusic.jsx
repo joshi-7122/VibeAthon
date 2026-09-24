@@ -1,4 +1,5 @@
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { Volume2, VolumeX } from 'lucide-react'
 
 // Drop the track at public/audio/background-music.mp3. If the file is missing
 // the player simply stays silent.
@@ -75,6 +76,7 @@ function fadeTo(volume, target, ms) {
 export function BackgroundMusic({ start = true }) {
   const audioRef = useRef(null)
   const graphRef = useRef(null)
+  const [isMuted, setIsMuted] = useState(false)
 
   useEffect(() => {
     const audio = audioRef.current
@@ -131,5 +133,18 @@ export function BackgroundMusic({ start = true }) {
 
   // preload="none": the track is only fetched when it's about to play, so it
   // doesn't compete with the hero videos while the page is loading
-  return <audio ref={audioRef} src={MUSIC_SRC} loop preload="none" aria-hidden="true" />
+  return (
+    <>
+      <audio ref={audioRef} src={MUSIC_SRC} loop preload="none" aria-hidden="true" muted={isMuted} />
+      {start && (
+        <button 
+          onClick={() => setIsMuted(!isMuted)}
+          className="fixed bottom-6 right-6 z-[100] p-3 bg-stark-red/20 hover:bg-stark-red/40 text-stark-red rounded-full backdrop-blur-md border border-stark-red/50 transition-all shadow-[0_0_15px_rgba(255,0,0,0.3)] hover:shadow-[0_0_25px_rgba(255,0,0,0.6)] cursor-pointer"
+          aria-label={isMuted ? "Unmute music" : "Mute music"}
+        >
+          {isMuted ? <VolumeX size={24} /> : <Volume2 size={24} />}
+        </button>
+      )}
+    </>
+  )
 }

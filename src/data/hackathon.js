@@ -81,10 +81,10 @@ export const HACKATHON_DATA = {
   // front of the card (the name still shows on the back).
   crew: [
     { name: 'Kritika Jha', title: 'IEEE GUSB Vice Chair', suit: 'Mark-XLIX', image: '/crew/kritika-jha-oc.webp', role: 'Organizing Committee', photo: '/crew/photos/kritika-jha.webp', photoCutout: true, color: '#4A7DFF' },
-    { name: 'Aryan Joshi', title: 'IEEE CIS Vice Chairperson', suit: 'Mark-XXVII', image: '/crew/aryan-joshi-oc.webp', role: 'Organizing Committee', photo: '/crew/photos/aryan-joshi.webp', photoCutout: true, color: '#FF7A1A' },
+    { name: 'Aryan Joshi', title: 'ORGANIZERS', suit: 'Mark-XXVII', image: '/crew/aryan-joshi-oc.webp', role: 'Organizing Committee', photo: '/crew/photos/aryan-joshi.webp', photoCutout: true, color: '#FF7A1A' },
     { name: 'Tarun Khuswaha', title: 'IEEE GUSB Tech Lead', suit: 'Mark-XXX', image: '/crew/tarun-khuswaha-oc.webp', role: 'Organizing Committee', photo: '/crew/photos/tarun-khuswaha.webp', photoCutout: true, color: '#2BA8FF' },
     { name: 'Mohammad Rahil', title: 'IEEE GUSB Secretary', suit: 'Mark-XVII', image: '/crew/mohammad-rahil-oc.webp', role: 'Organizing Committee', photo: '/crew/photos/mohammad-rahil.webp', photoCutout: true, glow: '#FFC83D', color: '#FFC72C' },
-    { name: 'Arnav Maitrey', title: 'IEEE CIS Chairperson', suit: 'Mark-XXVI', image: '/crew/arnav-maitrey-oc.webp', role: 'Organizing Committee', photo: '/crew/photos/arnav-maitrey.webp', photoCutout: true, color: '#7BD13A' },
+    { name: 'Arnav Maitrey', title: 'ORGANIZERS', suit: 'Mark-XXVI', image: '/crew/arnav-maitrey-oc.webp', role: 'Organizing Committee', photo: '/crew/photos/arnav-maitrey.webp', photoCutout: true, color: '#7BD13A' },
     { name: 'Atharav Singh', title: 'IEEE GUSB Treasurer', suit: 'Mark-XLII', image: '/crew/atharav-singh-oc.webp', role: 'Organizing Committee', photo: '/crew/photos/atharav-singh.webp', photoCutout: true, glow: '#FFC83D', color: '#E8B04A' },
     { name: 'Ansh Vashisth', title: 'IEEE GUSB Chairperson', suit: 'Mark-XLI', image: '/crew/ansh-vashisth-oc.webp', role: 'Organizing Committee', photo: '/crew/photos/ansh-vashisth.webp', photoCutout: true, glow: '#FFC83D', color: '#C0985A' },
   ],
