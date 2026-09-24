@@ -9,10 +9,10 @@ export const HACKATHON_DATA = {
   titleGlitch: 'CODE',
   titleRest: 'BEYOND BOUNDARIES.',
   stats: [
-    { value: 14000605, label: 'SIMULATIONS', rawDisplay: '14,000,605' },
+    { value: '04-10-2026', label: 'DATE', rawDisplay: '04-10-2026' },
     { value: 5, label: 'CORE A.I. & DECENTRALIZED TRACKS', rawDisplay: '5' },
     { value: 8, label: 'HOURS TO COMPILE', rawDisplay: '8' },
-    { value: '∞', label: 'STARK GRANTS POOL', rawDisplay: '∞' },
+    { value: '10 AM Onwards', label: 'TIME', rawDisplay: '10 AM Onwards' },
   ],
   tracks: [
     {

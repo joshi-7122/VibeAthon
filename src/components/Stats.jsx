@@ -3,6 +3,41 @@ import { motion } from 'framer-motion'
 import { HACKATHON_DATA } from '../data/hackathon'
 import { useCountUp } from '../hooks/useCountUp'
 
+function ScrambleText({ text, isVisible }) {
+  const [displayText, setDisplayText] = useState(text.replace(/[^\s-]/g, '0'))
+  
+  useEffect(() => {
+    if (!isVisible) return
+    
+    let iterations = 0
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*"
+    const nums = "0123456789"
+    
+    const interval = setInterval(() => {
+      setDisplayText(text.split('').map((letter, index) => {
+        if (letter === ' ' || letter === '-') return letter
+        if (index < iterations) {
+          return text[index]
+        }
+        if (/[0-9]/.test(letter)) {
+          return nums[Math.floor(Math.random() * nums.length)]
+        }
+        return chars[Math.floor(Math.random() * chars.length)]
+      }).join(''))
+      
+      if (iterations >= text.length) {
+        clearInterval(interval)
+      }
+      
+      iterations += 1 / 3
+    }, 30)
+    
+    return () => clearInterval(interval)
+  }, [text, isVisible])
+  
+  return <>{displayText}</>
+}
+
 function StatItem({ stat, isVisible }) {
   const count = useCountUp(
     typeof stat.value === 'number' ? stat.value : 0,
@@ -11,7 +46,9 @@ function StatItem({ stat, isVisible }) {
   )
 
   const formattedDisplay = () => {
-    if (typeof stat.value !== 'number') return stat.rawDisplay
+    if (typeof stat.value !== 'number') {
+      return <ScrambleText text={stat.rawDisplay} isVisible={isVisible} />
+    }
     return count.toLocaleString('en-US')
   }
 

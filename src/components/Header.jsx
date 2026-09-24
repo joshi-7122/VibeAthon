@@ -53,17 +53,15 @@ export function Header() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >
-      {/* Logo Area with Glass Container & System Status Dot */}
-      <a href="#top" className="hud-logo-container">
-        <img src="/vibathon-logo.png" alt={HACKATHON_DATA.name} className="h-6 w-auto object-contain" />
-        <span className="hidden sm:inline-flex items-center text-[10px] font-extrabold tracking-[0.24em] text-[#8b9aa6]">
-          <span className="hud-status-dot" aria-hidden="true" />
-          {HACKATHON_DATA.name} // {HACKATHON_DATA.subtitle}
-        </span>
-      </a>
+      {/* Logo Area */}
+      <div className="flex-1 flex items-center">
+        <a href="#top" className="transition-transform hover:scale-105">
+          <img src="/vibathon-logo-new.png" alt={HACKATHON_DATA.name} className="h-12 md:h-16 w-auto object-contain" />
+        </a>
+      </div>
 
       {/* Desktop Navigation Items with Clean Glowing Cyan Underline */}
-      <nav className="hidden md:flex items-center gap-1 lg:gap-3">
+      <nav className="hidden md:flex flex-none items-center justify-center gap-6 lg:gap-10">
         {HACKATHON_DATA.navLinks.map((link) => {
           const sectionId = link.href.replace('#', '')
           const isActive =
@@ -88,14 +86,14 @@ export function Header() {
       </nav>
 
       {/* Access Files Button */}
-      <div className="flex items-center gap-4">
+      <div className="flex flex-1 items-center justify-end gap-4">
         <a href={HACKATHON_DATA.registrationUrl} className="stark-access-btn">
           <span className="btn-hud-corner btn-hud-tl" />
           <span className="btn-hud-corner btn-hud-tr" />
           <span className="btn-hud-corner btn-hud-bl" />
           <span className="btn-hud-corner btn-hud-br" />
           <span className="stark-access-btn-scan" aria-hidden="true" />
-          <span>[ ACCESS FILES ]</span>
+          <span>REGISTER</span>
         </a>
 
         {/* Mobile Menu Button */}

@@ -250,6 +250,7 @@
   gap: 8px;
   border-right: 1px solid rgba(139, 154, 166, 0.2);
   padding: 20px;
+  min-width: 0;
 }
 
 .stats-grid div:last-child {
@@ -261,6 +262,8 @@
   font-family: 'Anton', sans-serif;
   font-size: clamp(1.4rem, 3vw, 2.8rem);
   letter-spacing: 0.04em;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
 }
 
 .stats-grid span {

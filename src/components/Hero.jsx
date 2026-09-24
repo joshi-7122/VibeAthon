@@ -42,7 +42,9 @@ export function Hero({ introDone = true }) {
   const loopRef = useRef(null)
   const cleanupsRef = useRef([])
   const [loopPlaying, setLoopPlaying] = useState(false)
-  const { displayText } = useTypewriter(HACKATHON_DATA.kicker, 35, 100)
+  const [bgVideoFinished, setBgVideoFinished] = useState(false)
+  
+  const { displayText } = useTypewriter(bgVideoFinished ? HACKATHON_DATA.kicker : '', 35, 100)
   const { playRepulsorHover } = useStarkAudio()
 
   const startLoop = () => cleanupsRef.current.push(playBackdrop(loopRef.current))
@@ -55,11 +57,20 @@ export function Hero({ introDone = true }) {
     return () => cleanups.forEach((fn) => fn())
   }, [])
 
-  // Play the intro video once, after the suit-up intro has cleared,
-  // then crossfade to the HUD video, which loops for the rest of the visit.
+  // Play the intro video once, after the suit-up intro has cleared
   useEffect(() => {
     if (introDone) cleanupsRef.current.push(playBackdrop(videoRef.current))
   }, [introDone])
+
+  // Play loop video after background video finishes and text animations are done
+  useEffect(() => {
+    if (bgVideoFinished) {
+      const timer = setTimeout(() => {
+        startLoop()
+      }, 1500)
+      return () => clearTimeout(timer)
+    }
+  }, [bgVideoFinished])
 
   // Browsers pause silent videos in background tabs and don't always resume;
   // pick up where we left off when the tab becomes visible again.
@@ -90,6 +101,7 @@ export function Hero({ introDone = true }) {
           playsInline
           preload="auto"
           onPlaying={() => setLoopPlaying(true)}
+          style={{ transform: 'scaleX(-1)' }}
           className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-75' : 'opacity-0'}`}
         />
         <video
@@ -99,8 +111,8 @@ export function Hero({ introDone = true }) {
           muted
           playsInline
           preload="auto"
-          onEnded={startLoop}
-          onError={startLoop}
+          onEnded={() => setBgVideoFinished(true)}
+          onError={() => setBgVideoFinished(true)}
           className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-0' : 'opacity-75'}`}
         />
         {/* Dark gradient overlay */}
@@ -136,7 +148,7 @@ export function Hero({ introDone = true }) {
         <motion.h1
           className="glitch stark-title"
           initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
+          animate={bgVideoFinished ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <span className="glitch-word">CODE</span>
@@ -149,7 +161,7 @@ export function Hero({ introDone = true }) {
         <motion.p
           className="hero-manifesto"
           initial={{ opacity: 0, x: -20 }}
-          animate={{ opacity: 1, x: 0 }}
+          animate={bgVideoFinished ? { opacity: 1, x: 0 } : { opacity: 0, x: -20 }}
           transition={{ duration: 0.8, delay: 0.4 }}
         >
           Think It. Prompt It. Build It.
@@ -159,18 +171,23 @@ export function Hero({ introDone = true }) {
           href={HACKATHON_DATA.registrationUrl}
           className="stark-cta arc-pulse-glow mt-8"
           initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
+          animate={bgVideoFinished ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.5, delay: 0.6 }}
           onMouseEnter={playRepulsorHover}
         >
           INITIALIZE UPLINK <ArrowUpRight className="inline-block ml-2 w-4 h-4" />
         </motion.a>
 
-        <div className="hero-readout mt-8">
+        <motion.div 
+          className="hero-readout mt-8"
+          initial={{ opacity: 0 }}
+          animate={bgVideoFinished ? { opacity: 1 } : { opacity: 0 }}
+          transition={{ duration: 0.8, delay: 0.8 }}
+        >
           <span>ARC REACTOR STATUS</span>
           <strong>100%</strong>
           <i />
-        </div>
+        </motion.div>
       </div>
     </section>
   )

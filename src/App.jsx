@@ -9,6 +9,7 @@ import { Stats } from './components/Stats'
 import { Tracks } from './components/Tracks'
 import { PrizesSection } from './components/PrizesSection'
 import { Timeline } from './components/Timeline'
+import { StarAssembly } from './components/StarAssembly'
 import { Footer } from './components/Footer'
 
 export function App() {
@@ -30,6 +31,7 @@ export function App() {
         <Tracks />
         <PrizesSection />
         <Timeline />
+        <StarAssembly />
       </main>
       <Footer />
     </div>

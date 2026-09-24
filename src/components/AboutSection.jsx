@@ -3,6 +3,56 @@ import { motion } from 'framer-motion'
 import { Terminal, Cpu } from 'lucide-react'
 import { useStarkAudio } from '../hooks/useStarkAudio'
 
+const Countdown = ({ targetDate }) => {
+  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
+
+  useEffect(() => {
+    const target = new Date(targetDate).getTime()
+
+    const interval = setInterval(() => {
+      const now = new Date().getTime()
+      const difference = target - now
+
+      if (difference <= 0) {
+        clearInterval(interval)
+        return
+      }
+
+      setTimeLeft({
+        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
+        hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
+        minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
+        seconds: Math.floor((difference % (1000 * 60)) / 1000)
+      })
+    }, 1000)
+    return () => clearInterval(interval)
+  }, [targetDate])
+
+  return (
+    <div className="flex gap-3 text-center items-center">
+      <div className="flex flex-col items-center">
+        <span className="text-xl font-black text-white">{String(timeLeft.days).padStart(2, '0')}</span>
+        <span className="text-[8px] text-[#8b9aa6] tracking-widest mt-0.5">DAYS</span>
+      </div>
+      <span className="text-lg font-bold text-[#00ADEF] animate-pulse pb-2">:</span>
+      <div className="flex flex-col items-center">
+        <span className="text-xl font-black text-white">{String(timeLeft.hours).padStart(2, '0')}</span>
+        <span className="text-[8px] text-[#8b9aa6] tracking-widest mt-0.5">HRS</span>
+      </div>
+      <span className="text-lg font-bold text-[#00ADEF] animate-pulse pb-2">:</span>
+      <div className="flex flex-col items-center">
+        <span className="text-xl font-black text-white">{String(timeLeft.minutes).padStart(2, '0')}</span>
+        <span className="text-[8px] text-[#8b9aa6] tracking-widest mt-0.5">MIN</span>
+      </div>
+      <span className="text-lg font-bold text-[#00ADEF] animate-pulse pb-2">:</span>
+      <div className="flex flex-col items-center">
+        <span className="text-xl font-black text-white">{String(timeLeft.seconds).padStart(2, '0')}</span>
+        <span className="text-[8px] text-[#8b9aa6] tracking-widest mt-0.5">SEC</span>
+      </div>
+    </div>
+  )
+}
+
 export function AboutSection() {
   const [terminalOutput, setTerminalOutput] = useState([
     '$ stark init --protocol-override',
@@ -140,12 +190,12 @@ export function AboutSection() {
                 <div className="font-mono text-[10px] text-[#8b9aa6] uppercase tracking-wider">AI & Web3 Scope</div>
               </div>
               <div className="p-4 bg-[#050708] border border-[#00ADEF]/20">
-                <div className="font-sans font-bold text-[#00ADEF] text-lg mb-1">NATIONAL</div>
+                <div className="font-sans font-bold text-[#00ADEF] text-lg mb-1">SPRINT</div>
                 <div className="font-mono text-[10px] text-[#8b9aa6] uppercase tracking-wider">Build Raid</div>
               </div>
               <div className="p-4 bg-[#050708] border border-[#00ADEF]/20">
                 <div className="font-sans font-bold text-[#00ADEF] text-lg mb-1">SQUAD BASED</div>
-                <div className="font-mono text-[10px] text-[#8b9aa6] uppercase tracking-wider">1-4 Builders</div>
+                <div className="font-mono text-[10px] text-[#8b9aa6] uppercase tracking-wider">1-3 Builders</div>
               </div>
             </div>
           </div>
@@ -200,6 +250,14 @@ export function AboutSection() {
               className="bg-transparent text-xs text-white focus:outline-none w-full font-mono"
             />
           </form>
+
+          {/* System Countdown Timer */}
+          <div className="mt-4 pt-4 border-t border-[#00ADEF]/30 flex flex-col sm:flex-row justify-between items-center gap-4 bg-[#090d12]/60 p-3">
+            <div className="text-[10px] text-[#00ADEF] tracking-widest uppercase">
+              UPLINK T-MINUS //
+            </div>
+            <Countdown targetDate="2026-10-04T10:00:00" />
+          </div>
         </motion.div>
       </div>
     </section>
