@@ -4,13 +4,6 @@ import { motion } from 'framer-motion'
 // TEMPORARY: Currently using idCard as photo until actual photos are uploaded
 const crewMembers = [
   {
-    id: '001',
-    name: 'ARNAV MAITREY',
-    role: 'MARK-XXVI',
-    idCard: '/arnav-id.jpg',
-    photo: '/arnav-id.jpg' // Pending user upload
-  },
-  {
     id: '002',
     name: 'ANSH VASHISTH',
     role: 'MARK-XLI',
@@ -37,6 +30,41 @@ const crewMembers = [
     role: 'MARK-XLII',
     idCard: '/atharav-id.jpg',
     photo: '/atharav-id.jpg'
+  },
+  {
+    id: '006',
+    name: 'ARNAV MAITREY',
+    role: 'MARK-XXVI',
+    idCard: '/arnav-id.jpg',
+    photo: '/arnav-id.jpg'
+  },
+  {
+    id: '007',
+    name: 'PRIYANSHI CHAUBEY',
+    role: 'IronHeart MARK-2',
+    idCard: '/priyanshi-id.jpg',
+    photo: '/priyanshi-id.jpg'
+  },
+  {
+    id: '008',
+    name: 'ARYAN JOSHI',
+    role: 'MARK-XXVII',
+    idCard: '/aryan-id.jpg',
+    photo: '/aryan-id.jpg'
+  },
+  {
+    id: '009',
+    name: 'KRITIKA JHA',
+    role: 'MARK-XLIX',
+    idCard: '/kritika-id.jpg',
+    photo: '/kritika-id.jpg'
+  },
+  {
+    id: '010',
+    name: 'ADITI RAJ SHARMA',
+    role: 'IronHeart V8',
+    idCard: '/aditi-id.jpg',
+    photo: '/aditi-id.jpg'
   }
 ]
 
