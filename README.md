@@ -1,100 +1,64 @@
-<div align="center">
-  <img src="./public/galgotias-logo.png" alt="Galgotias University" width="200" />
-  <img src="./public/ieee-logo.png" alt="IEEE Student Branch" width="160" />
+# VIBEATHON — Iron Man Themed Website
 
-  <h1>⚡ VIBEATHON: AI-POWERED DEVELOPMENT</h1>
-  <p><strong>The Official Hackathon Portal for Galgotias University IEEE Student Branch</strong></p>
-  
-  <p>
-    <a href="https://reactjs.org/"><img src="https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB" alt="React" /></a>
-    <a href="https://vitejs.dev/"><img src="https://img.shields.io/badge/Vite-B73BFE?style=for-the-badge&logo=vite&logoColor=FFD62E" alt="Vite" /></a>
-    <a href="https://tailwindcss.com/"><img src="https://img.shields.io/badge/Tailwind_CSS-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white" alt="Tailwind CSS" /></a>
-    <a href="https://www.framer.com/motion/"><img src="https://img.shields.io/badge/Framer_Motion-0055FF?style=for-the-badge&logo=framer&logoColor=white" alt="Framer Motion" /></a>
-    <a href="https://threejs.org/"><img src="https://img.shields.io/badge/Three.js-000000?style=for-the-badge&logo=three.js&logoColor=white" alt="Three.js" /></a>
-  </p>
-</div>
+React + Vite + Tailwind landing page for VIBEATHON.
 
-<br />
+## Requirements
 
-## 🦾 About The Project
+- [Node.js](https://nodejs.org/) 20.19 or newer (LTS recommended)
 
-**VibeAthon** is a high-octane, Iron Man / JARVIS-themed landing page engineered for an AI-Powered Development hackathon. Built with modern web technologies, it features immersive 3D CSS effects, hardware-accelerated video backgrounds, and interactive particle systems.
+## Run it
 
-The interface simulates a tactical HUD (Heads-Up Display) with stark cyan and crimson accents, monospace typography, and cinematic reveals.
+Each start file installs dependencies the first time, then opens the site in your browser.
 
-### 🌟 Key Features
-- **Suit-up Protocol Preloader:** A custom Three.js particle swarm and CSS-animated Arc Reactor loading screen.
-- **Cinematic Hero:** Seamless transitioning background videos that bypass native browser autoplay blocks using direct DOM manipulation.
-- **The Star Assembly:** A 3D-flipping ID card roster showcasing the core organizing team.
-- **Tactical Timeline:** A responsive "circuit board" schedule visualizing the hackathon phases.
-- **Hardware Accelerated:** Optimized for smooth 60fps animations across devices using Framer Motion and native CSS transforms.
+- **Windows:** double-click `start.bat`.
+- **macOS:** double-click `start.command`. If macOS says it's from an unidentified developer, right-click it → **Open** → **Open** (only needed once).
+- **Linux:** run `sh start.sh`.
 
----
+**Any OS (terminal):**
 
-## 🚀 Getting Started
+```bash
+git clone https://github.com/joshi-7122/VibeAthon.git
+cd VibeAthon
+npm install
+npm run dev
+```
 
-### Prerequisites
-Make sure you have [Node.js](https://nodejs.org/) (version 18+ recommended) installed on your system.
+Then open the URL it prints (usually http://localhost:5173). Don't open `index.html` or `dist/index.html` directly from the file system; the videos only load when the site is served.
 
-### Installation & Local Setup
+To let other devices on the same network open it, run `npm run dev -- --host` and use the "Network" URL it prints.
 
-1. **Clone the repository**
-   ```bash
-   git clone https://github.com/joshi-7122/VibeAthon.git
-   cd VibeAthon
-   ```
-
-2. **Install dependencies**
-   ```bash
-   npm install
-   ```
-
-3. **Ignite the development server**
-   ```bash
-   npm run dev
-   ```
-   Open `http://localhost:5173` in your browser. *(Note: Do not open `index.html` directly from the filesystem; the videos and assets require a local server).*
-
-### 🛠️ Quick Start Scripts (No CLI needed)
-- **Windows:** Double-click `start.bat`.
-- **macOS:** Double-click `start.command`. *(Right-click → Open the first time to bypass unidentified developer warnings).*
-- **Linux:** Run `sh start.sh`.
-
----
-
-## 🏗️ Architecture & Component Map
-
-| Component | Location | Description |
-|---|---|---|
-| **Global Data** | `src/data/hackathon.js` | Centralized data for tracks, timeline phases, and text copy. |
-| **Preloader** | `src/components/IronSuitupIntro.jsx` | Three.js particle background with SVG animated Arc Reactor. |
-| **Hero Section** | `src/components/Hero.jsx` | Dual-video cinematic reveal bypassing Safari playback restrictions. |
-| **Organizers** | `src/components/StarAssembly.jsx` | 3D CSS flip cards for the organizing committee (11 members). |
-| **Timeline** | `src/components/Timeline.jsx` | Circuit-board style vertical timeline with Iron Man sketch backdrop. |
-| **Global Styles** | `src/index.css` | Custom scrollbars, glitch animations, grid lines, and WebKit overrides. |
-
----
-
-## 🌐 Deployment
-
-To build the static files for production hosting (Vercel, Netlify, GitHub Pages):
+## Build for hosting
 
 ```bash
 npm run build
 ```
 
-This generates an optimized `dist/` folder ready for deployment. If deploying to Vercel, simply import the repository and select the **Vite** preset.
+The finished static site is written to `dist/`. Upload that folder to any static host (Netlify, Vercel, GitHub Pages, etc.). On Vercel, import this repo and pick the **Vite** framework preset.
 
----
+## Where things are
 
-## 🛡️ Browser Compatibility
+| What | File |
+|---|---|
+| Event name, stats, tracks, crew, FAQs, contact, event date | `src/data/hackathon.js` |
+| Loading screen ("IEEE GUSB CIS presents") | `src/components/IronSuitupIntro.jsx`, `IntroPresents.jsx` |
+| Hero section, background videos and intro audio | `src/components/Hero.jsx` |
+| Background music player (volume, start delay) | `src/components/BackgroundMusic.jsx` |
+| About section and launch countdown | `src/components/AboutSection.jsx`, `LaunchCountdown.jsx` |
+| Prize cards | `src/components/PrizesSection.jsx`, `PrizesSection.css` |
+| Timeline (schedule) | `src/components/Timeline.jsx` |
+| Our Marks (organising committee) | `src/components/CrewSection.jsx`, `CrewSection.css` |
+| FAQs | `src/components/FaqSection.jsx` (questions live in `src/data/hackathon.js`) |
+| Footer / contact | `src/components/Footer.jsx` |
+| Iron Man gauntlet cursor | `src/components/StarkCursor.jsx` |
+| Hero videos | `public/videos/hero-bg.mp4` (plays once), `public/videos/hero-loop.mp4` (loops), `public/videos/hero-poster.jpg` (shown until video starts) |
+| Audio | `public/audio/hero-intro.m4a` (plays with the first hero video), `public/audio/background-music.mp3` (loops quietly for the whole visit) |
 
-Engineered to support all modern browsers (Chrome, Edge, Firefox, Safari) on Windows, macOS, Linux, iOS, and Android. 
+## Browser support
 
-*Note on Video Autoplay:* The hero section utilizes a custom aggressive mount sequence via React callback refs to guarantee silent video playback and suppress the native Safari "Play" button overlay, ensuring a seamless cinematic experience regardless of device power-saving states.
+Works in Chrome, Edge, Firefox and Safari on Windows, macOS, Linux, Android and iOS, including older Macs on Safari 15 (macOS Catalina / Big Sur). The build keeps CSS fallbacks and `-webkit-` prefixes for those older browsers. The hero videos and intro audio are MP4/M4A with the index at the start of the file (fast start), so they stream in every browser.
 
----
-<div align="center">
-  <p><i>"Sometimes you gotta run before you can walk."</i></p>
-  <p>Developed for the Galgotias University IEEE Student Branch</p>
-</div>
+If a browser blocks autoplay (Safari's **Never Auto-Play** setting, iPhone Low Power Mode, data saver), the hero shows a still frame and the video starts on the first click, tap or key press.
+
+**Sound:** browsers only allow sound after the visitor has clicked, tapped or pressed a key on the page. The intro audio and background music start straight away if they have (for example "Skip intro"), otherwise on their first click, tap or key press. The background music plays at 8% volume (on iPhone/iPad too, via Web Audio) and pauses while the tab is in the background. Change the level with `VOLUME` in `src/components/BackgroundMusic.jsx`.
+
+To replace a hero video, export it as H.264 MP4 with "fast start" / "web optimized" enabled (HandBrake: *Web Optimized*; ffmpeg: `-c:v libx264 -movflags +faststart`).

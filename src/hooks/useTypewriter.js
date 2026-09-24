@@ -1,31 +1,35 @@
 import { useState, useEffect } from 'react'
 
-export function useTypewriter(text, speed = 40, delay = 200) {
+// Types `text` out one character at a time once `enabled` is true.
+export function useTypewriter(text, speed = 40, delay = 200, enabled = true) {
   const [displayText, setDisplayText] = useState('')
   const [isComplete, setIsComplete] = useState(false)
 
   useEffect(() => {
+    if (!enabled) return
+
     let index = 0
-    let timeoutId
+    let intervalId
 
     const startTyping = () => {
-      const interval = setInterval(() => {
+      intervalId = setInterval(() => {
         if (index <= text.length) {
           setDisplayText(text.slice(0, index))
           index++
         } else {
-          clearInterval(interval)
+          clearInterval(intervalId)
           setIsComplete(true)
         }
       }, speed)
     }
 
-    timeoutId = setTimeout(startTyping, delay)
+    const timeoutId = setTimeout(startTyping, delay)
 
     return () => {
       clearTimeout(timeoutId)
+      clearInterval(intervalId)
     }
-  }, [text, speed, delay])
+  }, [text, speed, delay, enabled])
 
   return { displayText, isComplete }
 }

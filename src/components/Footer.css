@@ -1,0 +1,385 @@
+/* ===== Site footer (Contact) — Iron Man HUD style ===== */
+.site-footer {
+  position: relative;
+  padding-top: 64px;
+  font-family: 'JetBrains Mono', monospace;
+  color: #8b9aa6;
+  background:
+    radial-gradient(60% 80% at 0% 0%, rgba(0, 173, 239, 0.07), transparent 60%),
+    radial-gradient(40% 60% at 100% 100%, rgba(160, 20, 25, 0.08), transparent 60%);
+}
+
+/* Glowing energy line along the top edge */
+.site-footer__energy {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.35) 20%, #00E5FF 50%, rgba(255, 176, 32, 0.35) 80%, transparent);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.45);
+}
+
+.site-footer__grid {
+  display: grid;
+  grid-template-columns: 1.2fr 0.8fr 1fr 1.2fr;
+  gap: 40px;
+  padding-bottom: 48px;
+}
+
+.site-footer__col {
+  min-width: 0;
+}
+
+/* Thin vertical dividers between columns on wide screens */
+@media (min-width: 1024px) {
+  .site-footer__col + .site-footer__col {
+    padding-left: 32px;
+    border-left: 1px solid rgba(139, 154, 166, 0.15);
+  }
+}
+
+.site-footer__heading {
+  margin-bottom: 18px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #00ADEF;
+}
+
+/* ---------- Brand ---------- */
+/* Looping reactor + fly-out logo (visuals in LogoFlyIn.css) */
+.site-footer__logo.logo-fly {
+  --logo-h: 38px;
+  width: fit-content;
+  /* keep room so the 1.9x fly-off zoom isn't clipped by neighbours */
+  padding: 6px 0;
+}
+
+@media (max-width: 400px) {
+  .site-footer__logo.logo-fly { --logo-h: 30px; }
+}
+
+.site-footer__tagline {
+  margin-top: 18px;
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  color: #edf4f7;
+}
+
+.site-footer__organizers {
+  margin-top: 8px;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+}
+
+.site-footer__organizers span {
+  color: #00ADEF;
+}
+
+/* Live mission status: mini arc reactor + event phase */
+.mission-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 22px;
+  padding: 10px 16px 10px 12px;
+  text-decoration: none;
+  background: linear-gradient(135deg, rgba(0, 173, 239, 0.1), rgba(3, 7, 10, 0.6) 70%);
+  border: 1px solid rgba(0, 229, 255, 0.25);
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+  transition: border-color 0.25s ease, background 0.25s ease;
+}
+
+.mission-status:hover,
+.mission-status:focus-visible {
+  outline: none;
+  border-color: rgba(0, 229, 255, 0.6);
+  background: linear-gradient(135deg, rgba(0, 173, 239, 0.18), rgba(3, 7, 10, 0.6) 70%);
+}
+
+.mission-status__reactor {
+  position: relative;
+  flex: none;
+  width: 26px;
+  height: 26px;
+}
+
+.mission-status__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px dashed rgba(0, 229, 255, 0.7);
+  animation: mission-spin 6s linear infinite;
+}
+
+.mission-status__core {
+  position: absolute;
+  inset: 7px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #e6fdff 0%, #00E5FF 55%, rgba(0, 229, 255, 0.2) 100%);
+  box-shadow: 0 0 10px #00E5FF;
+  animation: mission-core 2.4s ease-in-out infinite;
+}
+
+.mission-status__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.mission-status__label {
+  font-size: 9px;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #00ADEF;
+}
+
+.mission-status__value {
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #edf4f7;
+}
+
+.mission-status__detail {
+  font-size: 9.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #6d7c87;
+}
+
+/* Live: repulsor-red core, faster spin */
+.mission-status--live { border-color: rgba(255, 70, 60, 0.4); }
+.mission-status--live .mission-status__ring { border-color: rgba(255, 90, 70, 0.8); animation-duration: 2s; }
+.mission-status--live .mission-status__core {
+  background: radial-gradient(circle, #fff1e0 0%, #ff4d3d 55%, rgba(255, 60, 40, 0.2) 100%);
+  box-shadow: 0 0 10px #ff3b3b;
+}
+
+/* Complete: gold, ring at rest */
+.mission-status--complete .mission-status__ring { border-style: solid; border-color: rgba(242, 181, 68, 0.7); animation: none; }
+.mission-status--complete .mission-status__core {
+  background: radial-gradient(circle, #fff6dc 0%, #f2b544 60%, rgba(242, 181, 68, 0.2) 100%);
+  box-shadow: 0 0 8px #f2b544;
+}
+
+@keyframes mission-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes mission-core {
+  0%, 100% { opacity: 0.8; transform: scale(0.9); }
+  50% { opacity: 1; transform: scale(1.05); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mission-status__ring,
+  .mission-status__core { animation: none; }
+}
+
+/* ---------- Quick links ---------- */
+.site-footer__links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.site-footer__links a {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #8b9aa6;
+  text-decoration: none;
+  transition: color 0.25s ease, transform 0.25s ease, text-shadow 0.25s ease;
+}
+
+.site-footer__link-mark {
+  width: 10px;
+  height: 2px;
+  background: rgba(0, 173, 239, 0.4);
+  transition: width 0.25s ease, background 0.25s ease, box-shadow 0.25s ease;
+}
+
+.site-footer__links a:hover,
+.site-footer__links a:focus-visible {
+  color: #ffffff;
+  transform: translateX(4px);
+  text-shadow: 0 0 10px rgba(0, 229, 255, 0.6);
+  outline: none;
+}
+
+/* Section currently in view */
+.site-footer__links a.is-active {
+  color: #00E5FF;
+}
+
+.site-footer__links a.is-active .site-footer__link-mark {
+  width: 18px;
+  background: #00E5FF;
+  box-shadow: 0 0 8px #00E5FF;
+}
+
+.site-footer__links a:hover .site-footer__link-mark,
+.site-footer__links a:focus-visible .site-footer__link-mark {
+  width: 18px;
+  background: #00E5FF;
+  box-shadow: 0 0 8px #00E5FF;
+}
+
+/* ---------- Contact ---------- */
+.site-footer__contact {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 0;
+}
+
+.site-footer__contact dt {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #edf4f7;
+}
+
+.site-footer__contact dt svg {
+  color: #00ADEF;
+}
+
+.site-footer__contact dd {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.6;
+  color: #8b9aa6;
+  overflow-wrap: anywhere;
+}
+
+.site-footer__contact a {
+  color: #8b9aa6;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.site-footer__contact a:hover,
+.site-footer__contact a:focus-visible {
+  color: #00E5FF;
+  outline: none;
+}
+
+/* ---------- Map ---------- */
+.site-footer__map {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  padding: 4px;
+  border: 1px solid rgba(0, 173, 239, 0.45);
+  background: #050708;
+  box-shadow: 0 0 18px rgba(0, 173, 239, 0.18), inset 0 0 12px rgba(0, 173, 239, 0.1);
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.site-footer__map:hover {
+  border-color: #00E5FF;
+  box-shadow: 0 0 26px rgba(0, 229, 255, 0.35), inset 0 0 12px rgba(0, 173, 239, 0.15);
+}
+
+.site-footer__map iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  /* Night-mode tint so the map sits in the dark HUD theme */
+  filter: invert(0.92) hue-rotate(180deg) saturate(0.7) brightness(0.9) contrast(0.95);
+}
+
+.site-footer__bracket {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  color: #00E5FF;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.site-footer__bracket--tl { top: -3px; left: -3px; border-top: 2px solid; border-left: 2px solid; }
+.site-footer__bracket--tr { top: -3px; right: -3px; border-top: 2px solid; border-right: 2px solid; }
+.site-footer__bracket--bl { bottom: -3px; left: -3px; border-bottom: 2px solid; border-left: 2px solid; }
+.site-footer__bracket--br { bottom: -3px; right: -3px; border-bottom: 2px solid; border-right: 2px solid; }
+
+.site-footer__map-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: #00ADEF;
+  text-decoration: none;
+}
+
+.site-footer__map-link:hover { color: #00E5FF; }
+
+/* ---------- Bottom bar ---------- */
+.site-footer__bottom {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 20px 0 28px;
+  border-top: 1px solid rgba(139, 154, 166, 0.2);
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.site-footer__rights {
+  display: block;
+  margin-top: 4px;
+  color: rgba(139, 154, 166, 0.6);
+}
+
+.site-footer__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  color: #00ADEF;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.site-footer__top:hover { color: #00E5FF; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1023px) {
+  .site-footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 36px;
+  }
+}
+
+@media (max-width: 640px) {
+  .site-footer__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .site-footer__bottom {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

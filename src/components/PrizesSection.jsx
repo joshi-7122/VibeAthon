@@ -10,7 +10,7 @@ const armors = [
     color: '#FFD700',
     icon: Trophy,
     rank: '1st Prize',
-    amount: '₹3,000',
+    amount: 'To Be Announced',
     specs: {
       cpu: '4.8GHz Neural Compute',
       ram: '128TB ARC Memory',
@@ -24,7 +24,7 @@ const armors = [
     color: '#C0C0C0',
     icon: Award,
     rank: '2nd Prize',
-    amount: '₹2,000',
+    amount: 'To Be Announced',
     specs: {
       cpu: '12.4GHz Brute Force Array',
       ram: '512TB Gamma Buffer',
@@ -38,7 +38,7 @@ const armors = [
     color: '#CD7F32',
     icon: ShieldCheck,
     rank: '3rd Prize',
-    amount: '₹1,000',
+    amount: 'To Be Announced',
     specs: {
       cpu: '8.2GHz Nano-Compute Core',
       ram: '256TB Bleeding Edge',
@@ -62,8 +62,6 @@ const armors = [
   }
 ];
 
-// SVG Pattern for Carbon Fiber
-const carbonFiberPattern = `data:image/svg+xml,%3Csvg width='10' height='10' viewBox='0 0 10 10' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M-1,1 l2,-2 M0,10 l10,-10 M9,11 l2,-2' stroke='rgba(0,173,239,0.04)' stroke-width='1'/%3E%3C/svg%3E`;
 
 const ArmorCard = ({ armor, index }) => {
   const [diagnostic, setDiagnostic] = useState(false);
@@ -164,21 +162,24 @@ const ArmorCard = ({ armor, index }) => {
 
 const PrizesSection = () => {
   return (
-    <section className="relative py-24 bg-black overflow-hidden" id="prizes">
-      <div 
-        className="absolute inset-0 z-0" 
-        style={{ backgroundImage: `url("${carbonFiberPattern}")` }}
-      />
-      <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8">
-        <div className="mb-12">
-          <p className="text-[#00ADEF] font-mono text-sm mb-2 tracking-wider">// PRIZE POOL & STARK GRANTS</p>
-          <h2 className="text-4xl md:text-5xl font-black text-white tracking-widest uppercase">Bounties &amp; Rewards</h2>
+    <section id="prizes" className="stark-shell stark-section relative">
+      <div className="section-heading">
+        <div>
+          <p className="section-label">// PRIZE POOL & STARK GRANTS</p>
+          <h2>
+            BOUNTIES &amp;<br />
+            <span>REWARDS.</span>
+          </h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {armors.map((armor, index) => (
-            <ArmorCard key={armor.id} armor={armor} index={index} />
-          ))}
-        </div>
+        <p className="section-note">
+          Rewards for the builders who suit up.<br />
+          Full prize details announced soon.
+        </p>
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {armors.map((armor, index) => (
+          <ArmorCard key={armor.id} armor={armor} index={index} />
+        ))}
       </div>
     </section>
   );

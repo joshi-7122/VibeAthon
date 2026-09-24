@@ -1,38 +1,17 @@
-import { useState, useRef, useEffect } from 'react'
+import { useState, useRef } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Menu, X } from 'lucide-react'
 import { HACKATHON_DATA } from '../data/hackathon'
+import { LogoFlyIn } from './LogoFlyIn'
+import { useActiveSection } from '../hooks/useActiveSection'
 import './Header.css'
 
-export function Header() {
+export function Header({ introDone = true }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-  const [activeSection, setActiveSection] = useState('home')
   const headerRef = useRef(null)
 
-  // Track active section on scroll for HUD indicator
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY < 120) {
-        setActiveSection('home')
-        return
-      }
-
-      const sectionIds = ['contact', 'timeline', 'tracks', 'about']
-      const scrollPosition = window.scrollY + 250
-
-      for (const id of sectionIds) {
-        const el = document.getElementById(id)
-        if (el && scrollPosition >= el.offsetTop) {
-          setActiveSection(id)
-          break
-        }
-      }
-    }
-
-    window.addEventListener('scroll', handleScroll, { passive: true })
-    handleScroll()
-    return () => window.removeEventListener('scroll', handleScroll)
-  }, [])
+  // Highlight the section in view (same section list as the footer links)
+  const activeSection = useActiveSection(HACKATHON_DATA.sections.map((section) => section.id))
 
   // Interactive Cursor Radial Light Field
   const handleMouseMove = (e) => {
@@ -53,20 +32,16 @@ export function Header() {
       animate={{ y: 0, opacity: 1 }}
       transition={{ duration: 0.6, ease: 'easeOut' }}
     >
-      {/* Logo Area */}
-      <div className="flex-1 flex items-center">
-        <a href="#top" className="transition-transform hover:scale-105">
-          <img src="/vibathon-logo-new.png" alt={HACKATHON_DATA.name} className="h-12 md:h-16 w-auto object-contain" />
-        </a>
-      </div>
+      {/* Logo: reactor spins up, then the wordmark flies out of it toward the viewer */}
+      <a href="#top" className="hud-logo logo-fly" aria-label={`${HACKATHON_DATA.name} home`}>
+        <LogoFlyIn play={introDone} />
+      </a>
 
       {/* Desktop Navigation Items with Clean Glowing Cyan Underline */}
-      <nav className="hidden md:flex flex-none items-center justify-center gap-6 lg:gap-10">
+      <nav className="hidden md:flex items-center gap-0 xl:gap-3">
         {HACKATHON_DATA.navLinks.map((link) => {
           const sectionId = link.href.replace('#', '')
-          const isActive =
-            activeSection === sectionId ||
-            (sectionId === 'top' && activeSection === 'home')
+          const isActive = activeSection === sectionId
 
           return (
             <a
@@ -85,15 +60,16 @@ export function Header() {
         })}
       </nav>
 
-      {/* Access Files Button */}
-      <div className="flex flex-1 items-center justify-end gap-4">
-        <a href={HACKATHON_DATA.registrationUrl} className="stark-access-btn">
-          <span className="btn-hud-corner btn-hud-tl" />
-          <span className="btn-hud-corner btn-hud-tr" />
-          <span className="btn-hud-corner btn-hud-bl" />
-          <span className="btn-hud-corner btn-hud-br" />
-          <span className="stark-access-btn-scan" aria-hidden="true" />
-          <span>REGISTER</span>
+      {/* Register Button: armor plate with a live arc reactor */}
+      <div className="flex items-center gap-4">
+        <a href={HACKATHON_DATA.registrationUrl} className="suit-register-btn">
+          <span className="suit-register-btn__plate">
+            <span className="suit-register-btn__sweep" aria-hidden="true" />
+            <span className="suit-register-btn__reactor" aria-hidden="true">
+              <span className="suit-register-btn__core" />
+            </span>
+            <span className="suit-register-btn__label">Register</span>
+          </span>
         </a>
 
         {/* Mobile Menu Button */}
@@ -122,8 +98,7 @@ export function Header() {
             {HACKATHON_DATA.navLinks.map((link, idx) => {
               const sectionId = link.href.replace('#', '')
               const isActive =
-                activeSection === sectionId ||
-                (sectionId === 'top' && activeSection === 'home')
+                activeSection === sectionId
 
               return (
                 <a

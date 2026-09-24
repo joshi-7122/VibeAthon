@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Zap, ShieldCheck, Cpu } from 'lucide-react'
+import { IntroPresents } from './IntroPresents'
 
 export function IronSuitupIntro({ onComplete }) {
   const canvasRef = useRef(null)
@@ -51,7 +52,7 @@ export function IronSuitupIntro({ onComplete }) {
         else setCurrentStepIndex(4)
         return next
       })
-    }, 35)
+    }, 90)
 
     return () => clearInterval(interval)
   }, [])
@@ -180,6 +181,8 @@ export function IronSuitupIntro({ onComplete }) {
 
           {/* Center Photorealistic Animated Arc Reactor */}
           <div className="relative z-20 my-auto text-center flex flex-col items-center">
+            <IntroPresents />
+
             <div className="relative w-64 h-64 sm:w-72 sm:h-72 md:w-88 md:h-88 flex items-center justify-center mb-6">
               {/* SVG Arc Reactor Container */}
               <svg

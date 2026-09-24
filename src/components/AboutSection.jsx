@@ -1,120 +1,10 @@
-import { useState, useRef, useEffect } from 'react'
 import { motion } from 'framer-motion'
-import { Terminal, Cpu } from 'lucide-react'
-import { useStarkAudio } from '../hooks/useStarkAudio'
-
-const Countdown = ({ targetDate }) => {
-  const [timeLeft, setTimeLeft] = useState({ days: 0, hours: 0, minutes: 0, seconds: 0 })
-
-  useEffect(() => {
-    const target = new Date(targetDate).getTime()
-
-    const interval = setInterval(() => {
-      const now = new Date().getTime()
-      const difference = target - now
-
-      if (difference <= 0) {
-        clearInterval(interval)
-        return
-      }
-
-      setTimeLeft({
-        days: Math.floor(difference / (1000 * 60 * 60 * 24)),
-        hours: Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)),
-        minutes: Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60)),
-        seconds: Math.floor((difference % (1000 * 60)) / 1000)
-      })
-    }, 1000)
-    return () => clearInterval(interval)
-  }, [targetDate])
-
-  return (
-    <div className="flex gap-3 text-center items-center">
-      <div className="flex flex-col items-center">
-        <span className="text-xl font-black text-white">{String(timeLeft.days).padStart(2, '0')}</span>
-        <span className="text-[8px] text-[#8b9aa6] tracking-widest mt-0.5">DAYS</span>
-      </div>
-      <span className="text-lg font-bold text-[#00ADEF] animate-pulse pb-2">:</span>
-      <div className="flex flex-col items-center">
-        <span className="text-xl font-black text-white">{String(timeLeft.hours).padStart(2, '0')}</span>
-        <span className="text-[8px] text-[#8b9aa6] tracking-widest mt-0.5">HRS</span>
-      </div>
-      <span className="text-lg font-bold text-[#00ADEF] animate-pulse pb-2">:</span>
-      <div className="flex flex-col items-center">
-        <span className="text-xl font-black text-white">{String(timeLeft.minutes).padStart(2, '0')}</span>
-        <span className="text-[8px] text-[#8b9aa6] tracking-widest mt-0.5">MIN</span>
-      </div>
-      <span className="text-lg font-bold text-[#00ADEF] animate-pulse pb-2">:</span>
-      <div className="flex flex-col items-center">
-        <span className="text-xl font-black text-white">{String(timeLeft.seconds).padStart(2, '0')}</span>
-        <span className="text-[8px] text-[#8b9aa6] tracking-widest mt-0.5">SEC</span>
-      </div>
-    </div>
-  )
-}
+import { Cpu } from 'lucide-react'
+import { LaunchCountdown } from './LaunchCountdown'
 
 export function AboutSection() {
-  const [terminalOutput, setTerminalOutput] = useState([
-    '$ stark init --protocol-override',
-    '[OK] JARVIS Core ingestion initialized...',
-    '[OK] Arc Reactor output stabilized at 100%',
-    '[OK] Security override active. Ready for build raid.'
-  ])
-  const [inputVal, setInputVal] = useState('')
-  const [isShaking, setIsShaking] = useState(false)
-  const [arcPower, setArcPower] = useState(100)
-  const scrollRef = useRef(null)
-  const { playCommandConfirm, speakJarvis } = useStarkAudio()
-
-  useEffect(() => {
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight
-    }
-  }, [terminalOutput])
-
-  const handleCommandSubmit = (e) => {
-    e.preventDefault()
-    if (!inputVal.trim()) return
-
-    const cmd = inputVal.trim()
-    let response = `Command executed: "${cmd}" - System protocol active.`
-    
-    if (cmd.toLowerCase() === 'help') {
-      response = 'Available commands: help, status, tracks, clear, override, protocol clean-slate, power --boost'
-    } else if (cmd.toLowerCase() === 'status') {
-      response = 'STATUS: All 5 Intelligence Nodes Nominal. 8 Hours to compile.'
-    } else if (cmd.toLowerCase() === 'tracks') {
-      response = 'ARMOR TRACKS: MARK XLII (AI/ML), MARK L (Web3), HULKBUSTER (Innovation), MARK XLVI (Blockchain), MARK LXXXV (ML)'
-    } else if (cmd.toLowerCase() === 'clear') {
-      setTerminalOutput(['$ stark init --protocol-override'])
-      setInputVal('')
-      return
-    } else if (cmd.toLowerCase() === 'protocol clean-slate') {
-      response = '[ALERT] CLEAN SLATE PROTOCOL ACTIVATED. ALL ARMOR SUITS DETONATING...'
-      setIsShaking(true)
-      setTimeout(() => {
-        setIsShaking(false)
-        setTerminalOutput(prev => [...prev, '[OK] Protocol complete. All suits destroyed.'])
-      }, 2000)
-    } else if (cmd.toLowerCase() === 'power --boost') {
-      setArcPower(400)
-      response = '[BOOST] Arc Reactor output: 400% CAPACITY. WARNING: Exceeding safe parameters.'
-    }
-
-    setTerminalOutput(prev => [...prev, `$ ${cmd}`, response])
-    setInputVal('')
-    playCommandConfirm()
-    if (cmd.toLowerCase() === 'protocol clean-slate') {
-      speakJarvis('Clean Slate Protocol activated, sir. All suits are detonating.')
-    } else if (cmd.toLowerCase() === 'power --boost') {
-      speakJarvis('Arc Reactor output increased to 400 percent capacity. Exceeding safe parameters, sir.')
-    } else {
-      speakJarvis('Command acknowledged, sir.')
-    }
-  }
-
   return (
-    <section id="about" className={`stark-shell stark-section relative overflow-hidden ${isShaking ? 'animate-screen-shake border-2 border-[#FF0000]' : ''}`}>
+    <section id="about" className="stark-shell stark-section relative overflow-hidden">
       {/* JARVIS HUD Backdrop */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <img
@@ -195,15 +85,15 @@ export function AboutSection() {
               </div>
               <div className="p-4 bg-[#050708] border border-[#00ADEF]/20">
                 <div className="font-sans font-bold text-[#00ADEF] text-lg mb-1">SQUAD BASED</div>
-                <div className="font-mono text-[10px] text-[#8b9aa6] uppercase tracking-wider">1-3 Builders</div>
+                <div className="font-mono text-[10px] text-[#8b9aa6] uppercase tracking-wider">1-3 Members</div>
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Right Column: Interactive Terminal */}
+        {/* Right Column: Launch Countdown */}
         <motion.div
-          className="relative bg-[#050708]/90 backdrop-blur-md border-2 border-[#00ADEF]/50 p-6 flex flex-col justify-between font-mono"
+          className="relative bg-[#050708]/90 backdrop-blur-md border-2 border-[#00ADEF]/50 p-6"
           initial={{ opacity: 0, x: 30 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
@@ -215,49 +105,7 @@ export function AboutSection() {
           <span className="absolute bottom-0 left-0 w-4 h-4 border-b-2 border-l-2 border-[#FF0000]" />
           <span className="absolute bottom-0 right-0 w-4 h-4 border-b-2 border-r-2 border-[#FF0000]" />
 
-          <div>
-            <div className="flex items-center justify-between border-b border-[#00ADEF]/30 pb-3 mb-4">
-              <div className="flex items-center gap-2 text-xs text-[#00ADEF]">
-                <Terminal className="w-4 h-4" />
-                <span>JARVIS_TERMINAL // ARC: {arcPower}%</span>
-              </div>
-              <div className="flex gap-1.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#FF0000]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#FFD700]" />
-                <span className="w-2.5 h-2.5 rounded-full bg-[#00ADEF]" />
-              </div>
-            </div>
-
-            <div ref={scrollRef} className="space-y-2 text-xs text-[#8b9aa6] max-h-[220px] overflow-y-auto pr-2">
-              {terminalOutput.map((out, idx) => (
-                <div
-                  key={idx}
-                  className={out.startsWith('$') ? 'text-[#00ADEF] font-bold' : out.includes('OK') ? 'text-emerald-400' : 'text-[#aab7bf]'}
-                >
-                  {out}
-                </div>
-              ))}
-            </div>
-          </div>
-
-          <form onSubmit={handleCommandSubmit} className="mt-4 pt-3 border-t border-[#00ADEF]/30 flex items-center gap-2">
-            <span className="text-[#00ADEF] text-xs font-bold">$</span>
-            <input
-              type="text"
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-              placeholder="Type command ('help', 'status', 'protocol clean-slate')..."
-              className="bg-transparent text-xs text-white focus:outline-none w-full font-mono"
-            />
-          </form>
-
-          {/* System Countdown Timer */}
-          <div className="mt-4 pt-4 border-t border-[#00ADEF]/30 flex flex-col sm:flex-row justify-between items-center gap-4 bg-[#090d12]/60 p-3">
-            <div className="text-[10px] text-[#00ADEF] tracking-widest uppercase">
-              UPLINK T-MINUS //
-            </div>
-            <Countdown targetDate="2026-10-04T10:00:00" />
-          </div>
+          <LaunchCountdown />
         </motion.div>
       </div>
     </section>

@@ -1,0 +1,107 @@
+/* ===== Logo with spinning arc reactor + fly-out wordmark =====
+   Used by the header (plays once) and footer (loops).
+   The parent element carries .logo-fly and sets --logo-h. */
+.logo-fly {
+  --logo-h: 36px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+/* ---------- Spinning arc reactor ---------- */
+.logo-fly__reactor-wrap {
+  display: block;
+  width: calc(var(--logo-h) * 0.95);
+  height: calc(var(--logo-h) * 0.95);
+  flex-shrink: 0;
+}
+
+.logo-fly__reactor {
+  display: block;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+  filter: drop-shadow(0 0 6px rgba(0, 229, 255, 0.6));
+}
+
+.logo-fly__reactor-casing {
+  fill: #081018;
+  stroke: #8fa3ad;
+  stroke-width: 1.5;
+}
+
+.logo-fly__reactor-coils {
+  transform-origin: 20px 20px;
+  animation: logo-reactor-spin 6s linear infinite;
+}
+
+.logo-fly__reactor-coils rect {
+  fill: #00ADEF;
+  opacity: 0.85;
+}
+
+.logo-fly__reactor-ring {
+  fill: none;
+  stroke: rgba(0, 229, 255, 0.85);
+  stroke-width: 1.2;
+  stroke-dasharray: 3 2.5;
+  transform-origin: 20px 20px;
+  animation: logo-reactor-spin 3s linear infinite reverse;
+}
+
+.logo-fly__reactor-core {
+  fill: #e6fdff;
+  filter: drop-shadow(0 0 4px #00E5FF);
+  transform-origin: 20px 20px;
+  animation: logo-reactor-pulse 2s ease-in-out infinite;
+}
+
+.logo-fly:hover .logo-fly__reactor-coils { animation-duration: 1.5s; }
+.logo-fly:hover .logo-fly__reactor-ring { animation-duration: 0.8s; }
+
+@keyframes logo-reactor-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes logo-reactor-pulse {
+  0%, 100% { transform: scale(0.85); opacity: 0.8; }
+  50% { transform: scale(1.05); opacity: 1; }
+}
+
+/* ---------- Wordmark + speed streaks ---------- */
+/* Glow + hover grow live on the wrapper: the fly animation owns the
+   image's own transform/filter */
+.logo-fly__word {
+  position: relative;
+  display: block;
+  filter: drop-shadow(0 0 6px rgba(0, 173, 239, 0.35));
+  transition: filter 0.3s ease, transform 0.3s ease;
+}
+
+.logo-fly:hover .logo-fly__word,
+.logo-fly:focus-visible .logo-fly__word {
+  transform: scale(1.03);
+  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.7)) brightness(1.1);
+}
+
+.logo-fly__img {
+  display: block;
+  height: var(--logo-h);
+  width: auto;
+}
+
+.logo-fly__streak {
+  position: absolute;
+  left: -10%;
+  width: 120%;
+  height: 2px;
+  transform-origin: left center;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.9), rgba(230, 253, 255, 1), transparent);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.8);
+}
+
+.logo-fly__streak--0 { top: 18%; }
+.logo-fly__streak--1 { top: 50%; height: 3px; }
+.logo-fly__streak--2 { top: 80%; }

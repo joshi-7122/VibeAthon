@@ -3,53 +3,22 @@ import { motion } from 'framer-motion'
 import { HACKATHON_DATA } from '../data/hackathon'
 import { useCountUp } from '../hooks/useCountUp'
 
-function ScrambleText({ text, isVisible }) {
-  const [displayText, setDisplayText] = useState(text.replace(/[^\s-]/g, '0'))
-  
-  useEffect(() => {
-    if (!isVisible) return
-    
-    let iterations = 0
-    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ!@#$%^&*"
-    const nums = "0123456789"
-    
-    const interval = setInterval(() => {
-      setDisplayText(text.split('').map((letter, index) => {
-        if (letter === ' ' || letter === '-') return letter
-        if (index < iterations) {
-          return text[index]
-        }
-        if (/[0-9]/.test(letter)) {
-          return nums[Math.floor(Math.random() * nums.length)]
-        }
-        return chars[Math.floor(Math.random() * chars.length)]
-      }).join(''))
-      
-      if (iterations >= text.length) {
-        clearInterval(interval)
-      }
-      
-      iterations += 1 / 3
-    }, 30)
-    
-    return () => clearInterval(interval)
-  }, [text, isVisible])
-  
-  return <>{displayText}</>
-}
-
+// Every number inside a value counts up together, keeping its zero padding,
+// so text values like "04/10/2026" or "9 AM ONWARDS" animate too
 function StatItem({ stat, isVisible }) {
-  const count = useCountUp(
-    typeof stat.value === 'number' ? stat.value : 0,
-    2000,
-    isVisible
-  )
+  const display = String(stat.rawDisplay ?? stat.value)
+  const hasDigits = /\d/.test(display)
+  // 0 -> 1000 with the count-up's easing, used as a 0..1 progress
+  const progress = useCountUp(hasDigits ? 1000 : 0, 2000, isVisible) / 1000
 
   const formattedDisplay = () => {
-    if (typeof stat.value !== 'number') {
-      return <ScrambleText text={stat.rawDisplay} isVisible={isVisible} />
+    if (!hasDigits) return display
+    if (typeof stat.value === 'number') {
+      return Math.round(progress * stat.value).toLocaleString('en-US')
     }
-    return count.toLocaleString('en-US')
+    return display.replace(/\d+/g, (digits) =>
+      String(Math.round(progress * Number(digits))).padStart(digits.length, '0'),
+    )
   }
 
   return (
@@ -60,19 +29,22 @@ function StatItem({ stat, isVisible }) {
   )
 }
 
-export function Stats() {
+// `ready` holds the count-up until the suit-up intro has cleared, so it
+// never plays hidden behind the loader
+export function Stats({ ready = true }) {
   const ref = useRef(null)
-  const [isVisible, setIsVisible] = useState(false)
+  const [inView, setInView] = useState(false)
+  const isVisible = inView && ready
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setIsVisible(true)
+          setInView(true)
           observer.disconnect()
         }
       },
-      { threshold: 0.2 }
+      { threshold: 0.6 }
     )
 
     if (ref.current) {

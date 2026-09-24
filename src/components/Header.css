@@ -77,73 +77,29 @@
   box-shadow: 0 0 10px rgba(0, 229, 255, 0.4);
 }
 
-/* Logo Lockup Metallic Container */
-.hud-logo-container {
+/* Logo: medium size, scales down on tablets and phones so the menu still fits.
+   Reactor + fly-in visuals live in LogoFlyIn.css; sizes here use
+   .hud-logo.logo-fly so they win over its defaults. */
+.hud-logo.logo-fly {
   position: relative;
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  padding: 6px 14px;
-  background: rgba(9, 13, 18, 0.65);
-  border: 1px solid rgba(0, 229, 255, 0.2);
-  border-radius: 2px;
-  transition: all 0.3s ease;
-  overflow: hidden;
+  flex-shrink: 0;
   z-index: 5;
-  text-decoration: none;
 }
 
-.hud-logo-container:hover {
-  border-color: rgba(0, 229, 255, 0.5);
-  transform: scale(1.01);
-  box-shadow: 0 0 15px rgba(0, 229, 255, 0.15);
+@media (max-width: 1279px) {
+  .hud-logo.logo-fly { --logo-h: 28px; gap: 8px; }
 }
 
-.hud-logo-container::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 60%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 229, 255, 0.2) 50%,
-    transparent 100%
-  );
-  transform: skewX(-25deg);
-  transition: left 0.6s ease;
-  pointer-events: none;
+@media (max-width: 900px) {
+  .hud-logo.logo-fly { --logo-h: 22px; gap: 6px; }
 }
 
-.hud-logo-container:hover::after {
-  left: 140%;
+@media (max-width: 767px) {
+  .hud-logo.logo-fly { --logo-h: 24px; }
 }
 
-/* System Status Dot */
-.hud-status-dot {
-  display: inline-block;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background-color: #00E5FF;
-  margin-right: 6px;
-  box-shadow: 0 0 6px #00E5FF;
-  animation: hud-dot-breath 2.8s ease-in-out infinite;
-}
-
-@keyframes hud-dot-breath {
-  0%, 100% {
-    opacity: 0.35;
-    transform: scale(0.9);
-    box-shadow: 0 0 3px #00E5FF;
-  }
-  50% {
-    opacity: 1;
-    transform: scale(1.15);
-    box-shadow: 0 0 10px #00E5FF, 0 0 18px rgba(0, 229, 255, 0.8);
-  }
+@media (max-width: 400px) {
+  .hud-logo.logo-fly { --logo-h: 18px; }
 }
 
 /* Navigation Items - Clean & Simplistic */
@@ -252,70 +208,189 @@
   100% { transform: translateX(-50%) scale(1, 0.75);   opacity: 0.8; }
 }
 
-/* ACCESS FILES BUTTON */
-.stark-access-btn {
+/* Compact header on tablets / small laptops so all six links fit
+   alongside the logo and the Access Files button */
+@media (max-width: 1279px) {
+  .stark-hud-header {
+    gap: 12px;
+    padding-inline: clamp(12px, 3vw, 40px);
+  }
+
+  .hud-nav-item {
+    padding: 8px 9px;
+    letter-spacing: 0.14em;
+  }
+
+  .suit-register-btn__plate {
+    padding: 8px 14px 8px 10px;
+    letter-spacing: 0.16em;
+  }
+}
+
+@media (max-width: 900px) {
+  .hud-nav-item {
+    padding: 8px 6px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .suit-register-btn__plate {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+}
+
+/* REGISTER BUTTON: Iron Man armor plate
+   Translucent dark plating with a faint red tint, thin HUD trim,
+   cut corners, arc reactor on the left */
+.suit-register-btn {
+  --cut: 9px;
+  position: relative;
+  display: inline-block;
+  padding: 1px; /* trim thickness */
+  background: linear-gradient(135deg, rgba(255, 200, 90, 0.55), rgba(0, 229, 255, 0.4) 35%, rgba(0, 229, 255, 0.2) 70%, rgba(255, 200, 90, 0.45));
+  clip-path: polygon(var(--cut) 0, 100% 0, 100% calc(100% - var(--cut)), calc(100% - var(--cut)) 100%, 0 100%, 0 var(--cut));
+  text-decoration: none;
+  z-index: 10;
+  transition: filter 0.3s ease, transform 0.3s ease, background 0.3s ease;
+}
+
+.suit-register-btn:hover,
+.suit-register-btn:focus-visible {
+  transform: translateY(-1px);
+  background: linear-gradient(135deg, rgba(255, 200, 90, 0.8), #00E5FF 35%, rgba(0, 229, 255, 0.5) 70%, rgba(255, 200, 90, 0.7));
+  filter: drop-shadow(0 0 10px rgba(0, 229, 255, 0.3));
+  outline: none;
+}
+
+.suit-register-btn__plate {
   position: relative;
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  padding: 8px 18px;
-  background: rgba(9, 13, 18, 0.9);
-  border: 1px solid rgba(0, 229, 255, 0.4);
-  border-radius: 2px;
-  color: #00E5FF;
+  gap: 10px;
+  padding: 8px 18px 8px 12px;
+  overflow: hidden;
+  clip-path: inherit;
+  background:
+    radial-gradient(120% 140% at 0% 50%, rgba(160, 20, 25, 0.35), transparent 60%),
+    linear-gradient(180deg, rgba(12, 19, 26, 0.82), rgba(5, 8, 11, 0.78));
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: #cfefff;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
   font-size: 11px;
   font-weight: 800;
-  letter-spacing: 0.22em;
-  text-decoration: none;
-  overflow: hidden;
-  transition: border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
-  box-shadow: 0 0 12px rgba(0, 229, 255, 0.15), inset 0 0 8px rgba(0, 229, 255, 0.05);
-  z-index: 10;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color 0.3s ease, text-shadow 0.3s ease;
 }
 
-.stark-access-btn:hover {
+.suit-register-btn:hover .suit-register-btn__plate {
   color: #ffffff;
-  border-color: #00E5FF;
-  box-shadow: 0 0 20px rgba(0, 229, 255, 0.45), inset 0 0 12px rgba(0, 229, 255, 0.2);
-  text-shadow: 0 0 8px rgba(255, 255, 255, 0.8);
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
 }
 
-/* Horizontal Scanning Line on Hover */
-.stark-access-btn-scan {
+/* Arc reactor */
+.suit-register-btn__reactor {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0c1a22 0%, #05080a 75%);
+  border: 1px solid rgba(255, 210, 120, 0.6);
+  box-shadow: 0 0 6px rgba(0, 229, 255, 0.6);
+}
+
+.suit-register-btn__reactor::before {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 229, 255, 0.8);
+  animation: reactor-spin 6s linear infinite;
+}
+
+.suit-register-btn:hover .suit-register-btn__reactor::before {
+  animation-duration: 1.2s;
+}
+
+.suit-register-btn__core {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #e6fdff;
+  box-shadow: 0 0 4px #00E5FF, 0 0 8px #00E5FF;
+  animation: reactor-pulse 2s ease-in-out infinite;
+}
+
+.suit-register-btn:hover .suit-register-btn__core {
+  animation-duration: 0.6s;
+}
+
+@keyframes reactor-spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes reactor-pulse {
+  0%, 100% { box-shadow: 0 0 3px #00E5FF, 0 0 6px rgba(0, 229, 255, 0.6); }
+  50%      { box-shadow: 0 0 6px #00E5FF, 0 0 14px #00E5FF; }
+}
+
+/* Light sweep across the plate on hover */
+.suit-register-btn__sweep {
   position: absolute;
   top: 0;
-  left: -100%;
+  bottom: 0;
+  left: -80%;
   width: 50%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent 0%,
-    rgba(0, 229, 255, 0.45) 50%,
-    transparent 100%
-  );
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.22), transparent);
   transform: skewX(-20deg);
-  pointer-events: none;
 }
 
-.stark-access-btn:hover .stark-access-btn-scan {
-  animation: btn-scan-sweep 0.5s ease-in-out forwards;
+.suit-register-btn:hover .suit-register-btn__sweep {
+  animation: register-sweep 0.7s ease-out;
 }
 
-@keyframes btn-scan-sweep {
-  0% { left: -100%; }
-  100% { left: 200%; }
+@keyframes register-sweep {
+  from { left: -80%; }
+  to   { left: 140%; }
 }
 
-/* HUD Corner Brackets on Access Button */
-.btn-hud-corner {
-  position: absolute;
-  width: 4px;
-  height: 4px;
-  pointer-events: none;
+.suit-register-btn__label {
+  position: relative;
 }
 
-.btn-hud-tl { top: 0; left: 0; border-top: 1px solid #00E5FF; border-left: 1px solid #00E5FF; }
-.btn-hud-tr { top: 0; right: 0; border-top: 1px solid #00E5FF; border-right: 1px solid #00E5FF; }
-.btn-hud-bl { bottom: 0; left: 0; border-bottom: 1px solid #00E5FF; border-left: 1px solid #00E5FF; }
-.btn-hud-br { bottom: 0; right: 0; border-bottom: 1px solid #00E5FF; border-right: 1px solid #00E5FF; }
+/* Very small phones: logo + reactor, Register and the menu button must share ~330px */
+@media (max-width: 400px) {
+  .stark-hud-header {
+    gap: 8px;
+    padding-inline: 12px;
+  }
+
+  .suit-register-btn__plate {
+    gap: 6px;
+    padding: 7px 10px 7px 8px;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
+  .suit-register-btn__reactor {
+    width: 15px;
+    height: 15px;
+  }
+}
+
+/* Smallest phones (320px wide) */
+@media (max-width: 340px) {
+  .hud-logo.logo-fly { --logo-h: 15px; gap: 5px; }
+
+  .suit-register-btn__plate {
+    padding: 6px 8px 6px 7px;
+    letter-spacing: 0.06em;
+  }
+}

@@ -1,0 +1,308 @@
+/* ===== 8-Hour Raid Timeline ===== */
+
+/* ---------- Blueprint suit backdrop ---------- */
+.timeline-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  /* clip (not hidden) so the sticky child can still stick while scrolling */
+  overflow: clip;
+  /* Fade the top and bottom edges into the page, like the About backdrop */
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0, #000 220px, #000 calc(100% - 220px), transparent 100%);
+  mask-image: linear-gradient(to bottom, transparent 0, #000 220px, #000 calc(100% - 220px), transparent 100%);
+}
+
+.timeline-backdrop__sticky {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.timeline-backdrop__stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* Cover the whole viewport: at least full width, and at least tall enough
+   for the full height. Anchored so the helmet sits near the top of the
+   screen and the chest reactor in the upper third. */
+.timeline-backdrop__suit {
+  position: absolute;
+  left: 50%;
+  top: 0;
+  /* 1.1x so the upward anchor shift never leaves a gap at the bottom */
+  width: max(100%, calc(110vh * 736 / 1298));
+  aspect-ratio: 736 / 1298;
+  transform: translate(-50%, -7%);
+}
+
+/* Slow cinematic drift: gentle zoom + pan, looping back and forth */
+.timeline-backdrop__drift {
+  position: absolute;
+  inset: 0;
+  transform-origin: 50% 30%;
+  animation: suit-drift 26s ease-in-out infinite alternate;
+}
+
+@keyframes suit-drift {
+  0% { transform: scale(1) translate(0, 0); }
+  33% { transform: scale(1.05) translate(-1.2%, 0.8%); }
+  66% { transform: scale(1.08) translate(1%, -0.6%); }
+  100% { transform: scale(1.03) translate(0.4%, 1.2%); }
+}
+
+.timeline-backdrop__suit img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  opacity: 0.3;
+  /* Black drops out, white linework stays; tinted toward the HUD blue */
+  mix-blend-mode: screen;
+  filter: sepia(0.5) hue-rotate(160deg) saturate(1.8) brightness(0.95);
+  -webkit-mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 70%, transparent 100%);
+}
+
+/* Chest arc reactor glow (positions measured from the image) */
+.timeline-backdrop__reactor {
+  position: absolute;
+  left: 50.6%;
+  top: 32.9%;
+  width: 16%;
+  aspect-ratio: 1;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(191, 246, 255, 0.55) 0%, rgba(0, 229, 255, 0.28) 30%, rgba(0, 173, 239, 0.08) 55%, transparent 70%);
+  mix-blend-mode: screen;
+  animation: suit-reactor 3.2s ease-in-out infinite;
+}
+
+@keyframes suit-reactor {
+  0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(0.92); }
+  50% { opacity: 1; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+/* Eye slits */
+.timeline-backdrop__eye {
+  position: absolute;
+  top: 15.9%;
+  width: 6%;
+  height: 1.6%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(ellipse, rgba(191, 246, 255, 0.8), rgba(0, 229, 255, 0.25) 50%, transparent 72%);
+  mix-blend-mode: screen;
+  animation: suit-eyes 5s ease-in-out infinite;
+}
+
+.timeline-backdrop__eye--left { left: 45.3%; }
+.timeline-backdrop__eye--right { left: 54.7%; }
+
+@keyframes suit-eyes {
+  0%, 100% { opacity: 0.5; }
+  45% { opacity: 1; }
+  48% { opacity: 0.2; }
+  52% { opacity: 1; }
+}
+
+/* Blueprint scan line that passes down the suit now and then */
+.timeline-backdrop__scan {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.55), transparent);
+  box-shadow: 0 0 12px rgba(0, 229, 255, 0.45);
+  opacity: 0;
+  animation: suit-scan 9s ease-in-out infinite;
+}
+
+@keyframes suit-scan {
+  0% { top: 4%; opacity: 0; }
+  5% { opacity: 1; }
+  55% { top: 88%; opacity: 0.8; }
+  60%, 100% { top: 88%; opacity: 0; }
+}
+
+/* Spacing: stacked on mobile; on wider screens alternating cards tuck into
+   each other's gap so nine milestones don't make the section endless */
+.timeline-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+@media (min-width: 768px) {
+  .timeline-list { gap: 0; }
+  .timeline-row + .timeline-row { margin-top: -36px; }
+}
+
+@media (min-width: 1024px) {
+  .timeline-row + .timeline-row { margin-top: -48px; }
+}
+
+/* ---------- Card ---------- */
+.timeline-card {
+  overflow: hidden;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.timeline-card:hover {
+  box-shadow: 0 0 18px rgba(255, 0, 0, 0.18), 0 0 30px rgba(0, 173, 239, 0.12);
+}
+
+.timeline-card__label {
+  color: rgba(0, 173, 239, 0.8);
+}
+
+.timeline-status {
+  color: #00ADEF;
+  border-color: rgba(0, 173, 239, 0.4);
+  white-space: nowrap;
+  transition: color 0.3s ease, background 0.3s ease, border-color 0.3s ease;
+}
+
+/* 11:00 AM: problem statement reveal */
+.timeline-card--reveal {
+  border-color: rgba(0, 229, 255, 0.75);
+  box-shadow: 0 0 22px rgba(0, 229, 255, 0.14), inset 0 0 24px rgba(0, 229, 255, 0.05);
+}
+
+.timeline-card--reveal .timeline-card__label { color: #00E5FF; }
+
+.timeline-card--reveal.is-unlocked .timeline-status {
+  color: #050708;
+  background: #00E5FF;
+  border-color: #00E5FF;
+}
+
+.timeline-status.is-locked {
+  color: #FF3B3B;
+  border-color: rgba(255, 59, 59, 0.5);
+}
+
+/* One-time light sweep when the reveal unlocks */
+.timeline-card__unlock-sweep {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: -60%;
+  width: 45%;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(0, 229, 255, 0.22), transparent);
+  transform: skewX(-18deg);
+  opacity: 0;
+}
+
+.timeline-card--reveal.is-unlocked .timeline-card__unlock-sweep {
+  animation: timeline-unlock 1.1s ease-out 1;
+}
+
+@keyframes timeline-unlock {
+  0% { left: -60%; opacity: 1; }
+  100% { left: 130%; opacity: 0; }
+}
+
+/* Evaluation rounds: red-tinted frame + slow diagnostic scan */
+.timeline-card--eval {
+  border-color: rgba(255, 59, 59, 0.5);
+  box-shadow: 0 0 20px rgba(255, 0, 0, 0.1), inset 0 0 24px rgba(255, 0, 0, 0.04);
+}
+
+.timeline-card--eval .timeline-card__label { color: rgba(255, 90, 90, 0.9); }
+
+.timeline-card--eval .timeline-status {
+  color: #FF5A5A;
+  border-color: rgba(255, 59, 59, 0.55);
+}
+
+.timeline-card__scan {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 40%;
+  pointer-events: none;
+  background: linear-gradient(to bottom, transparent, rgba(0, 229, 255, 0.06) 70%, rgba(0, 229, 255, 0.28) 98%, transparent);
+  animation: timeline-scan 3.6s linear infinite;
+}
+
+@keyframes timeline-scan {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(260%); }
+}
+
+/* 6:00 PM: mission complete */
+.timeline-card--final .timeline-status {
+  color: #050708;
+  background: #00ADEF;
+  border-color: #00ADEF;
+}
+
+/* ---------- Nodes ---------- */
+.timeline-node {
+  transition: box-shadow 0.4s ease, border-color 0.4s ease;
+}
+
+/* Soft pulse while the milestone is on screen */
+.timeline-node.is-active {
+  animation: timeline-node-pulse 2.4s ease-in-out infinite;
+}
+
+@keyframes timeline-node-pulse {
+  0%, 100% { box-shadow: 0 0 12px rgba(0, 173, 239, 0.7); }
+  50% { box-shadow: 0 0 22px #00ADEF, 0 0 34px rgba(0, 173, 239, 0.35); }
+}
+
+/* Evaluation nodes: rotating scan ring */
+.timeline-node--eval {
+  border-color: #FF3B3B;
+}
+
+.timeline-node--eval::after {
+  content: '';
+  position: absolute;
+  inset: -7px;
+  border-radius: 50%;
+  border: 1px dashed rgba(255, 59, 59, 0.7);
+  animation: timeline-spin 6s linear infinite;
+}
+
+.timeline-node--eval.is-active {
+  animation-name: timeline-node-pulse-red;
+}
+
+@keyframes timeline-node-pulse-red {
+  0%, 100% { box-shadow: 0 0 12px rgba(255, 59, 59, 0.6); }
+  50% { box-shadow: 0 0 22px #FF3B3B, 0 0 34px rgba(255, 59, 59, 0.3); }
+}
+
+/* Reveal node: outward ping ring */
+.timeline-node--reveal {
+  border-color: #00E5FF;
+}
+
+.timeline-node--reveal::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: 50%;
+  border: 1px solid #00E5FF;
+  opacity: 0;
+}
+
+.timeline-node--reveal.is-active::after {
+  animation: timeline-ping 2s ease-out infinite;
+}
+
+@keyframes timeline-ping {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+@keyframes timeline-spin {
+  to { transform: rotate(360deg); }
+}
