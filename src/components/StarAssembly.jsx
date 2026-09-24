@@ -65,6 +65,20 @@ const crewMembers = [
     role: 'IronHeart V8',
     idCard: '/aditi-id.jpg',
     photo: '/aditi-id.jpg'
+  },
+  {
+    id: '011',
+    name: 'MEDHAVI',
+    role: 'IronHeart MIT',
+    idCard: '/medhavi-id.jpg',
+    photo: '/medhavi-id.jpg'
+  },
+  {
+    id: '012',
+    name: 'ANIRUDH KAUSHIK',
+    role: 'HULKBUSTER',
+    idCard: '/anirudh-id.jpg',
+    photo: '/anirudh-id.jpg'
   }
 ]
 

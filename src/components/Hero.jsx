@@ -59,7 +59,10 @@ export function Hero({ introDone = true }) {
 
   // Play the intro video once, after the suit-up intro has cleared
   useEffect(() => {
-    if (introDone) cleanupsRef.current.push(playBackdrop(videoRef.current))
+    if (introDone && videoRef.current) {
+      videoRef.current.currentTime = 0; // Ensure it starts from the beginning when revealed
+      cleanupsRef.current.push(playBackdrop(videoRef.current))
+    }
   }, [introDone])
 
   // Play loop video after background video finishes and text animations are done
@@ -97,6 +100,7 @@ export function Hero({ introDone = true }) {
           src="/videos/hero-loop.mp4"
           ref={loopRef}
           muted
+          autoPlay
           loop
           playsInline
           preload="auto"
@@ -109,6 +113,7 @@ export function Hero({ introDone = true }) {
           poster="/videos/hero-poster.jpg"
           ref={videoRef}
           muted
+          autoPlay
           playsInline
           preload="auto"
           onEnded={() => setBgVideoFinished(true)}
