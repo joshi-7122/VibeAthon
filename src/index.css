@@ -17,6 +17,19 @@
   }
 }
 
+/* ===== Intro background video ===== */
+.intro-bg-video {
+  pointer-events: none;
+  user-select: none;
+}
+
+video::-webkit-media-controls-start-playback-button,
+video::-webkit-media-controls-overlay-play-button {
+  display: none !important;
+  -webkit-appearance: none !important;
+  opacity: 0 !important;
+}
+
 
 /* Background Grid Pattern */
 .stark-page {

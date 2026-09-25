@@ -18,9 +18,9 @@ export default defineConfig({
   },
   // Allow Cloudflare quick-tunnel links (https://*.trycloudflare.com) for sharing
   server: {
-    allowedHosts: ['.trycloudflare.com'],
+    allowedHosts: true,
   },
   preview: {
-    allowedHosts: ['.trycloudflare.com'],
+    allowedHosts: true,
   },
 })

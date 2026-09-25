@@ -2,14 +2,15 @@
    Hero typography (Anton, white + cyan). Letters fly in from random points
    like armour parts and assemble into the name. */
 .intro-presents {
-  /* above the reactor so incoming parts fly over it */
   position: relative;
   z-index: 40;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
-  margin-bottom: 26px;
+  gap: 10px;
+  margin-bottom: 0;
+  /* drop shadow so text reads over any video colour */
+  filter: drop-shadow(0 2px 18px rgba(0, 0, 0, 0.7));
 }
 
 .intro-presents__title {
