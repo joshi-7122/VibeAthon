@@ -63,14 +63,7 @@
   align-items: center;
   gap: 6px;
   margin: 12px 0 8px;
-  background: none;
-  border: 0;
-  padding: 0;
-  cursor: pointer;
-  color: inherit;
 }
-
-.countdown__reactor:focus-visible { outline: none; }
 
 .countdown__reactor svg {
   width: 124px;
@@ -80,19 +73,9 @@
   transition: filter 0.3s ease, transform 0.3s ease;
 }
 
-.countdown__reactor:hover svg,
-.countdown__reactor:focus-visible svg {
+.countdown__reactor:hover svg {
   transform: scale(1.05);
   filter: drop-shadow(0 0 20px rgba(0, 229, 255, 0.7));
-}
-
-.countdown__reactor.is-pinged svg {
-  animation: countdown-ping 0.9s ease-out;
-}
-
-@keyframes countdown-ping {
-  0% { filter: drop-shadow(0 0 30px #00E5FF); transform: scale(1.1); }
-  100% { filter: drop-shadow(0 0 12px rgba(0, 229, 255, 0.35)); transform: scale(1); }
 }
 
 /* Minute progress ring around the casing */
@@ -186,16 +169,6 @@
   0%, 100% { transform: scale(0.94); opacity: 0.85; }
   50% { transform: scale(1.04); opacity: 1; }
 }
-
-.countdown__reactor-hint {
-  font-size: 9px;
-  letter-spacing: 0.25em;
-  text-transform: uppercase;
-  color: #8b9aa6;
-  transition: color 0.3s ease;
-}
-
-.countdown__reactor:hover .countdown__reactor-hint { color: #00E5FF; }
 
 /* ---------- Digits ---------- */
 .countdown__grid {

@@ -5,6 +5,11 @@ import { IntroPresents } from './IntroPresents'
 
 const TOTAL_FRAMES = 206
 const FPS = 24
+// Frames downloading at once; enough to fill the pipe without starving the
+// early frames
+const LOAD_CONCURRENCY = 6
+// Never hold visitors on the loader longer than this, however slow the network
+const MAX_INTRO_MS = 20000
 
 const SUITUP_STEPS = [
   'ATTACHING AUTONOMOUS EXOSUIT CHASSIS SEGMENTS...',
@@ -41,23 +46,35 @@ export function IronSuitupIntro({ onComplete }) {
     const ctx = canvas.getContext('2d', { alpha: false })
 
     const images = new Array(TOTAL_FRAMES + 1)
+    const loaded = new Array(TOTAL_FRAMES + 1).fill(false)
     let isCancelled = false
 
-    const formatPath = (index) => `/intro-frames/frame_${String(index).padStart(4, '0')}.jpg`
+    const formatPath = (index) => `/intro-frames/frame_${String(index).padStart(4, '0')}.webp`
 
-    // Load first frame immediately
-    const firstImg = new Image()
-    firstImg.src = formatPath(1)
-    images[1] = firstImg
-
-    // Preload next frames in background
-    for (let i = 2; i <= TOTAL_FRAMES; i++) {
+    // Download frames in order, a few at a time, so the early frames arrive
+    // first on a real network (all at once, they'd finish in random order)
+    let nextToLoad = 1
+    const loadNext = () => {
+      if (isCancelled || nextToLoad > TOTAL_FRAMES) return
+      const index = nextToLoad++
       const img = new Image()
-      img.src = formatPath(i)
-      images[i] = img
+      img.decoding = 'async'
+      img.onload = () => {
+        loaded[index] = true
+        if (index === 1) drawFrame(img)
+        loadNext()
+      }
+      img.onerror = () => {
+        // Don't stall on a missing frame; drawFrame skips broken images
+        loaded[index] = true
+        loadNext()
+      }
+      img.src = formatPath(index)
+      images[index] = img
     }
+    for (let i = 0; i < LOAD_CONCURRENCY; i++) loadNext()
 
-    const startTime = performance.now()
+    const mountTime = performance.now()
     let animId
 
     const drawFrame = (img) => {
@@ -88,17 +105,29 @@ export function IronSuitupIntro({ onComplete }) {
       ctx.drawImage(img, 0, 0, vw, vh, shiftX, shiftY, drawW, drawH)
     }
 
-    firstImg.onload = () => {
-      if (!isCancelled) drawFrame(firstImg)
-    }
-
-    let lastDrawnFrame = 1
+    // Buffered playback: the playhead only moves on to frames that have
+    // downloaded, so a slow connection pauses on the last frame (like a video
+    // buffering) instead of flashing black and skipping ahead
+    let playhead = 1
+    let lastTime = null
+    let lastDrawnFrame = 0
 
     const renderLoop = (now) => {
       if (isCancelled) return
-      const elapsed = (now - startTime) / 1000
-      const currentFrameIndex = Math.min(Math.floor(elapsed * FPS) + 1, TOTAL_FRAMES)
+      const dt = lastTime === null ? 0 : (now - lastTime) / 1000
+      lastTime = now
 
+      // Start once the first second of frames is ready
+      const startBuffer = Math.min(FPS, TOTAL_FRAMES)
+      const started = playhead > 1 || loaded.slice(1, startBuffer + 1).every(Boolean)
+      if (started) {
+        const next = Math.min(Math.floor(playhead + dt * FPS), TOTAL_FRAMES)
+        let target = Math.floor(playhead)
+        while (target < next && loaded[target + 1]) target++
+        playhead = target === next ? Math.min(playhead + dt * FPS, TOTAL_FRAMES) : target
+      }
+
+      const currentFrameIndex = Math.floor(playhead)
       const pct = Math.min(Math.round((currentFrameIndex / TOTAL_FRAMES) * 100), 100)
       setProgress(pct)
 
@@ -108,15 +137,13 @@ export function IronSuitupIntro({ onComplete }) {
       else if (pct < 100) setCurrentStepIndex(3)
       else setCurrentStepIndex(4)
 
-      const currentImg = images[currentFrameIndex]
-      if (currentImg && currentImg.complete && currentImg.naturalWidth > 0) {
-        drawFrame(currentImg)
+      if (currentFrameIndex !== lastDrawnFrame && loaded[currentFrameIndex]) {
+        drawFrame(images[currentFrameIndex])
         lastDrawnFrame = currentFrameIndex
-      } else if (images[lastDrawnFrame]) {
-        drawFrame(images[lastDrawnFrame])
       }
 
-      if (currentFrameIndex >= TOTAL_FRAMES) {
+      // Done, or give up waiting on a very slow connection
+      if (currentFrameIndex >= TOTAL_FRAMES || now - mountTime > MAX_INTRO_MS) {
         handleSuitupLaunch()
         return
       }

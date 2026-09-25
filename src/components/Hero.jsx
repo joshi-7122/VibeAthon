@@ -3,7 +3,6 @@ import { ArrowUpRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { HACKATHON_DATA } from '../data/hackathon'
 import { useTypewriter } from '../hooks/useTypewriter'
-import { useStarkAudio } from '../hooks/useStarkAudio'
 
 
 // Muted, inline playback is what every browser allows to autoplay. React only
@@ -39,7 +38,6 @@ export function Hero({ introDone = true }) {
   const [textReady, setTextReady] = useState(false)
   const revealText = () => setTextReady(true)
   const { displayText } = useTypewriter(HACKATHON_DATA.kicker, 35, 100, textReady)
-  const { playRepulsorHover } = useStarkAudio()
 
   const startLoop = () => cleanupsRef.current.push(playBackdrop(loopRef.current))
 
@@ -63,6 +61,17 @@ export function Hero({ introDone = true }) {
     playAudioFrom(0).catch(() => {
       // Just fail if browser blocks autoplay
     })
+  }
+
+  // First video is running: start its audio and begin fetching the loop
+  // video in the background so it's ready when the first one ends
+  const handleFirstVideoPlaying = () => {
+    startAudio()
+    const loop = loopRef.current
+    if (loop && loop.preload !== 'auto') {
+      loop.preload = 'auto'
+      loop.load()
+    }
   }
 
   // First video finished (or failed): reveal the text and move on to the loop
@@ -117,7 +126,9 @@ export function Hero({ introDone = true }) {
           muted
           loop
           playsInline
-          preload="auto"
+          // 86 MB: don't fetch it while the loader and first video need the
+          // bandwidth; warmLoop() starts it once the first video is playing
+          preload="none"
           onPlaying={() => setLoopPlaying(true)}
           // Mirrored horizontally so the HUD graphics sit away from the headline
           style={{ transform: 'scaleX(-1)' }}
@@ -130,7 +141,7 @@ export function Hero({ introDone = true }) {
           muted
           playsInline
           preload="auto"
-          onPlaying={startAudio}
+          onPlaying={handleFirstVideoPlaying}
           onEnded={handleFirstVideoDone}
           onError={handleFirstVideoDone}
           className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-0' : 'opacity-75'}`}
@@ -203,7 +214,6 @@ export function Hero({ introDone = true }) {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={textReady ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}
           transition={{ duration: 0.5, delay: 0.75 }}
-          onMouseEnter={playRepulsorHover}
         >
           INITIALIZE UPLINK <ArrowUpRight className="inline-block ml-2 w-4 h-4" />
         </motion.a>

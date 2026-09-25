@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Timer } from 'lucide-react'
-import { useStarkAudio } from '../hooks/useStarkAudio'
 import { HACKATHON_DATA } from '../data/hackathon'
 import './LaunchCountdown.css'
 
@@ -70,8 +69,6 @@ function Digits({ value }) {
 export function LaunchCountdown() {
   const [now, setNow] = useState(() => Date.now())
   const [hovered, setHovered] = useState(null)
-  const [pinged, setPinged] = useState(false)
-  const { playCommandConfirm, speakJarvis } = useStarkAudio()
 
   // Tick on each whole second so the digits change together
   useEffect(() => {
@@ -97,26 +94,6 @@ export function LaunchCountdown() {
   // Outer ring fills once per minute
   const minuteProgress = phase === 'complete' ? 1 : (60 - t.seconds) / 60
 
-  const announce = () => {
-    playCommandConfirm()
-    setPinged(true)
-    setTimeout(() => setPinged(false), 900)
-    if (phase === 'complete') {
-      speakJarvis('The build raid is complete, sir. Excellent work.')
-    } else {
-      const parts = [
-        t.days && `${t.days} ${t.days === 1 ? 'day' : 'days'}`,
-        t.hours && `${t.hours} ${t.hours === 1 ? 'hour' : 'hours'}`,
-        `${t.minutes} ${t.minutes === 1 ? 'minute' : 'minutes'}`,
-      ].filter(Boolean)
-      speakJarvis(
-        phase === 'live'
-          ? `The raid is live, sir. ${parts.join(', ')} remaining.`
-          : `T-minus ${parts.join(', ')} until launch, sir.`
-      )
-    }
-  }
-
   return (
     <div className="countdown">
       {/* Header */}
@@ -131,13 +108,8 @@ export function LaunchCountdown() {
         </span>
       </div>
 
-      {/* Arc reactor: click for a JARVIS time check */}
-      <button
-        type="button"
-        className={`countdown__reactor ${pinged ? 'is-pinged' : ''}`}
-        onClick={announce}
-        aria-label="Ask JARVIS for the time remaining"
-      >
+      {/* Arc reactor (decorative) */}
+      <div className="countdown__reactor" aria-hidden="true">
         <svg viewBox="0 0 120 120" aria-hidden="true">
           <defs>
             <radialGradient id="reactor-core" cx="50%" cy="50%" r="50%">
@@ -195,8 +167,7 @@ export function LaunchCountdown() {
           <circle cx="60" cy="60" r="15" fill="url(#reactor-core)" className="countdown__reactor-core" />
           <circle cx="60" cy="60" r="5" className="countdown__reactor-heart" />
         </svg>
-        <span className="countdown__reactor-hint">Tap for status</span>
-      </button>
+      </div>
 
       {/* Digits */}
       <div className="countdown__grid" role="timer" aria-live="off" aria-label={`${t.days} days ${t.hours} hours ${t.minutes} minutes ${t.seconds} seconds`}>
