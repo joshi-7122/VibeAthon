@@ -6,9 +6,19 @@ import { IntroPresents } from './IntroPresents'
 const TOTAL_FRAMES = 206
 const FPS = 24
 
+const SUITUP_STEPS = [
+  'ATTACHING AUTONOMOUS EXOSUIT CHASSIS SEGMENTS...',
+  'SYNCHRONIZING PISTON HYDRAULICS & POWER CORE...',
+  'LOCKING HELMET SENSOR VISOR & TACTICAL HUD...',
+  'SEALING TITANIUM-GRAPHITE ALLOY ARMOR...',
+  'EXOSUIT INITIALIZATION 100% COMPLETE. UNVEILING VIBATHON...'
+]
+
 export function IronSuitupIntro({ onComplete }) {
   const [isExiting, setIsExiting] = useState(false)
   const [isFlashing, setIsFlashing] = useState(false)
+  const [progress, setProgress] = useState(0)
+  const [currentStepIndex, setCurrentStepIndex] = useState(0)
   const hasAutoLaunched = useRef(false)
   const canvasRef = useRef(null)
 
@@ -24,9 +34,7 @@ export function IronSuitupIntro({ onComplete }) {
     }, 400)
   }, [isExiting, onComplete])
 
-  // Canvas Frame-Sequence Animation:
-  // Decoded image frames drawn to <canvas> run 100% automatically on page load
-  // without ANY browser autoplay policies or play/pause button overlays.
+  // Canvas Frame-Sequence Animation with Synchronized Progress Bar
   useEffect(() => {
     const canvas = canvasRef.current
     if (!canvas) return
@@ -37,7 +45,7 @@ export function IronSuitupIntro({ onComplete }) {
 
     const formatPath = (index) => `/intro-frames/frame_${String(index).padStart(4, '0')}.jpg`
 
-    // Load first frame immediately and render as placeholder
+    // Load first frame immediately
     const firstImg = new Image()
     firstImg.src = formatPath(1)
     images[1] = firstImg
@@ -91,6 +99,15 @@ export function IronSuitupIntro({ onComplete }) {
       const elapsed = (now - startTime) / 1000
       const currentFrameIndex = Math.min(Math.floor(elapsed * FPS) + 1, TOTAL_FRAMES)
 
+      const pct = Math.min(Math.round((currentFrameIndex / TOTAL_FRAMES) * 100), 100)
+      setProgress(pct)
+
+      if (pct < 25) setCurrentStepIndex(0)
+      else if (pct < 50) setCurrentStepIndex(1)
+      else if (pct < 75) setCurrentStepIndex(2)
+      else if (pct < 100) setCurrentStepIndex(3)
+      else setCurrentStepIndex(4)
+
       const currentImg = images[currentFrameIndex]
       if (currentImg && currentImg.complete && currentImg.naturalWidth > 0) {
         drawFrame(currentImg)
@@ -131,7 +148,7 @@ export function IronSuitupIntro({ onComplete }) {
             }`}
           />
 
-          {/* Full-screen high-performance graphics canvas */}
+          {/* Full-screen graphics canvas */}
           <canvas
             ref={canvasRef}
             className="absolute inset-0 w-full h-full pointer-events-none z-0"
@@ -139,7 +156,7 @@ export function IronSuitupIntro({ onComplete }) {
           />
 
           {/* Subtle dark vignette overlay */}
-          <div className="absolute inset-0 bg-gradient-to-b from-[#050708]/60 via-transparent to-[#050708]/70 pointer-events-none z-[1]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#050708]/60 via-transparent to-[#050708]/75 pointer-events-none z-[1]" />
 
           {/* Scanlines texture */}
           <div className="pointer-events-none absolute inset-0 z-[2] opacity-[0.05] scanlines" />
@@ -169,9 +186,33 @@ export function IronSuitupIntro({ onComplete }) {
           {/* Spacer */}
           <div className="flex-1" />
 
-          {/* ── Bottom: IEEE GUSB CIS PRESENTS (centered at bottom) ── */}
-          <div className="relative z-20 flex justify-center pb-10 md:pb-14">
-            <IntroPresents />
+          {/* ── Bottom Section: Loading Bar & Step Status + IEEE GUSB CIS PRESENTS ── */}
+          <div className="relative z-20 flex flex-col items-center gap-3 px-6 pb-8 md:pb-12">
+            {/* Progress + step status HUD */}
+            <div className="w-full max-w-lg flex flex-col items-center gap-2">
+              {/* Step Status Message */}
+              <div className="font-mono text-xs md:text-sm text-[#55d8ff] tracking-widest uppercase max-w-md h-6 flex items-center justify-center font-bold text-center drop-shadow-[0_0_8px_rgba(0,173,239,0.5)]">
+                {SUITUP_STEPS[currentStepIndex]}
+              </div>
+
+              {/* Glowing Progress Bar */}
+              <div className="w-full h-2 bg-[#8b9aa6]/20 relative overflow-hidden border border-[#00ADEF]/50 shadow-[0_0_15px_rgba(0,173,239,0.4)] rounded-full">
+                <div
+                  className="h-full bg-gradient-to-r from-[#00ADEF] via-[#55d8ff] to-[#FFFFFF] transition-all duration-75"
+                  style={{ width: `${progress}%` }}
+                />
+              </div>
+
+              {/* Percentage / Status readout */}
+              <div className="text-[11px] font-mono text-[#00ADEF] tracking-widest font-bold uppercase">
+                {progress >= 100 ? 'UNVEILING VIBATHON LANDING PAGE...' : `INITIALIZING... ${progress}%`}
+              </div>
+            </div>
+
+            {/* IEEE GUSB CIS PRESENTS */}
+            <div className="w-full flex justify-center mt-2">
+              <IntroPresents />
+            </div>
           </div>
         </motion.div>
       )}
