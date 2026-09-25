@@ -197,6 +197,8 @@ export function Hero({ introDone = true }) {
 
         <motion.a
           href={HACKATHON_DATA.registrationUrl}
+          target={HACKATHON_DATA.registrationUrl?.startsWith('http') ? '_blank' : undefined}
+          rel={HACKATHON_DATA.registrationUrl?.startsWith('http') ? 'noopener noreferrer' : undefined}
           className="stark-cta arc-pulse-glow mt-8"
           initial={{ opacity: 0, scale: 0.95 }}
           animate={textReady ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.95 }}

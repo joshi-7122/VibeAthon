@@ -1,22 +1,32 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
-import { Flag, Radar, ScanSearch, ShieldCheck, Trophy, Wrench } from 'lucide-react'
+import { FileText, Flag, Radar, ScanSearch, ShieldCheck, Trophy, Wrench } from 'lucide-react'
 import './Timeline.css'
 
-// 4 October, 9:00 AM – 4:00 PM IST.
-// kind: 'reveal' = problem statement drop, 'eval' = evaluation round,
+// 25 Sep – 02 Oct: PPT Submission & Evaluation.
+// 4 October: 8-Hour Build Raid & Evaluation Rounds.
+// kind: 'ppt' = PPT submission phase, 'reveal' = problem statement drop, 'eval' = evaluation round,
 // 'final' = results; everything else is a regular checkpoint.
 const MILESTONES = [
   {
-    time: '9:00 AM',
+    time: '25 SEP 26, 12:00 PM → 02 OCT 26, 11:59 PM',
+    label: 'Phase 01 — Screening & Submission',
+    status: 'SUBMISSION OPEN',
+    title: 'PPT SUBMISSION & EVALUATION',
+    desc: 'PPT submission and initial screening evaluation window is active from 25th September to 2nd October.',
+    icon: FileText,
+    kind: 'ppt',
+  },
+  {
+    time: '04 OCT 26, 9:00 AM',
     label: 'Suit Check-In',
     status: 'START',
-    title: 'REGISTRATION',
-    desc: 'Teams check in, get verified and settle in for the day ahead.',
+    title: 'REGISTRATION & CHECK-IN',
+    desc: 'Teams check in, get verified and settle in for the 8-hour build raid.',
     icon: Flag,
   },
   {
-    time: '9:30 AM',
+    time: '04 OCT 26, 9:30 AM',
     label: 'Mission Briefing',
     status: 'UNLOCKED',
     title: 'PROBLEM STATEMENTS REVEALED',
@@ -25,15 +35,15 @@ const MILESTONES = [
     kind: 'reveal',
   },
   {
-    time: '10:00 AM',
+    time: '04 OCT 26, 10:00 AM',
     label: 'Arc Reactor Online',
-    status: 'IN PROGRESS',
+    status: 'BUILD STARTS',
     title: 'BUILD STARTS',
-    desc: 'The build sprint begins. Ideate, architect and start shipping your solution.',
+    desc: 'The 8-hour build sprint begins on 4th October. Ideate, architect and start shipping your solution.',
     icon: Wrench,
   },
   {
-    time: '1:00 PM',
+    time: '04 OCT 26, 1:00 PM',
     label: 'Evaluation — Round 01',
     status: 'CHECKPOINT',
     title: 'EVALUATION ROUND 1 & MENTORING',
@@ -42,16 +52,16 @@ const MILESTONES = [
     kind: 'eval',
   },
   {
-    time: '3:30 PM',
+    time: '04 OCT 26, 4:30 PM',
     label: 'Evaluation — Round 02',
     status: 'FINAL CHECK',
     title: 'EVALUATION ROUND 2 (FINAL)',
-    desc: 'The final round of evaluation. Present your build to the judges.',
+    desc: 'The final round of evaluation at 4:30 PM. Present your live build to the judges.',
     icon: ShieldCheck,
     kind: 'eval',
   },
   {
-    time: '4:00 PM',
+    time: '04 OCT 26, 5:00 PM',
     label: 'Mission Complete',
     status: 'COMPLETE',
     title: 'RESULTS ANNOUNCEMENT',
@@ -101,8 +111,8 @@ function MilestoneRow({ item, index }) {
           {item.kind === 'eval' && <span className="timeline-card__scan" aria-hidden="true" />}
           {item.kind === 'reveal' && <span className="timeline-card__unlock-sweep" aria-hidden="true" />}
 
-          <div className="flex justify-between items-center gap-3 mb-1.5">
-            <span className="font-mono text-xs font-bold text-[#FF0000] tracking-widest">{item.time}</span>
+          <div className="flex justify-between items-center gap-3 mb-2 flex-wrap sm:flex-nowrap">
+            <span className="font-mono text-sm sm:text-base md:text-lg font-black text-[#FF0000] tracking-wider timeline-time-text">{item.time}</span>
             <span
               className={`timeline-status font-mono text-[9px] px-2 py-0.5 border ${
                 item.kind === 'reveal' && !unlocked ? 'is-locked' : ''
@@ -181,7 +191,7 @@ export function Timeline() {
         </div>
         <p className="section-note">
           Tick Tock Hack!<br />
-          4 October · 9:00 AM – 4:00 PM IST · Two evaluation rounds.
+          25 Sep – 02 Oct 26: PPT Submission & Screening · 4 Oct 26: 8-Hour Build Raid & Evaluations.
         </p>
       </div>
 

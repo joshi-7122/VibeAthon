@@ -112,7 +112,7 @@ export const HACKATHON_DATA = {
   // Event window (fixed IST offset so every visitor counts to the same moment)
   launchDate: '2026-10-04T10:00:00+05:30',
   durationHours: 8,
-  registrationUrl: '#tracks',
+  registrationUrl: 'https://unstop.com/hackathons/vibeathon-galgotias-university-gu-greater-noida-1761022',
 }
 
 HACKATHON_DATA.navLinks = HACKATHON_DATA.sections

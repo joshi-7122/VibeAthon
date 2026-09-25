@@ -62,7 +62,12 @@ export function Header({ introDone = true }) {
 
       {/* Register Button: armor plate with a live arc reactor */}
       <div className="flex items-center gap-4">
-        <a href={HACKATHON_DATA.registrationUrl} className="suit-register-btn">
+        <a
+          href={HACKATHON_DATA.registrationUrl}
+          target={HACKATHON_DATA.registrationUrl?.startsWith('http') ? '_blank' : undefined}
+          rel={HACKATHON_DATA.registrationUrl?.startsWith('http') ? 'noopener noreferrer' : undefined}
+          className="suit-register-btn"
+        >
           <span className="suit-register-btn__plate">
             <span className="suit-register-btn__sweep" aria-hidden="true" />
             <span className="suit-register-btn__reactor" aria-hidden="true">
@@ -114,6 +119,15 @@ export function Header({ introDone = true }) {
                 </a>
               )
             })}
+            <a
+              href={HACKATHON_DATA.registrationUrl}
+              target={HACKATHON_DATA.registrationUrl?.startsWith('http') ? '_blank' : undefined}
+              rel={HACKATHON_DATA.registrationUrl?.startsWith('http') ? 'noopener noreferrer' : undefined}
+              onClick={() => setMobileMenuOpen(false)}
+              className="mt-2 py-3 px-4 bg-[#FF0000]/15 border border-[#FF0000]/60 hover:bg-[#FF0000]/30 text-[#FF5A5A] hover:text-white transition-colors uppercase font-bold text-center flex items-center justify-center gap-2 rounded-sm tracking-wider"
+            >
+              <span>REGISTER ON UNSTOP</span>
+            </a>
           </motion.nav>
         )}
       </AnimatePresence>
