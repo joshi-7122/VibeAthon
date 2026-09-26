@@ -90,9 +90,10 @@ export function Hero({ introDone = true }) {
         let offset = 0
         if (videoRef.current && !videoRef.current.paused && !videoRef.current.ended) {
           offset = videoRef.current.currentTime
-        } else {
+        } else if (videoStartRef.current) {
           const elapsed = (performance.now() - videoStartRef.current) / 1000
-          offset = elapsed < 6.5 ? elapsed : 0
+          if (elapsed >= 6.5) return
+          offset = elapsed
         }
 
         el.muted = false
@@ -118,12 +119,8 @@ export function Hero({ introDone = true }) {
     }
   }, [startAudio])
 
-  // First video finished (or failed): stop audio immediately, reveal text and start loop
+  // First video finished (or failed): reveal text and start loop while audio continues to completion
   const handleFirstVideoDone = useCallback(() => {
-    if (audioRef.current) {
-      audioRef.current.pause()
-      audioRef.current.currentTime = 0
-    }
     revealText()
     startLoop()
   }, [])
@@ -156,9 +153,7 @@ export function Hero({ introDone = true }) {
     // Safety net in case the video stalls and never ends
     const fallback = setTimeout(() => {
       setTextReady(true)
-      if (audioRef.current) {
-        audioRef.current.pause()
-      }
+      startLoop()
     }, 8000)
     return () => clearTimeout(fallback)
   }, [introDone, startAudio])
@@ -172,8 +167,12 @@ export function Hero({ introDone = true }) {
         return
       }
       const first = videoRef.current
-      if (loopPlaying) loopRef.current?.play().catch(() => {})
-      else if (introDone && first && !first.ended) {
+      if (loopPlaying) {
+        loopRef.current?.play().catch(() => {})
+        if (audioRef.current && !audioRef.current.ended) {
+          audioRef.current.play().catch(() => {})
+        }
+      } else if (introDone && first && !first.ended) {
         first.play().catch(() => {})
         if (audioRef.current && !audioRef.current.ended) {
           audioRef.current.play().catch(() => {})
