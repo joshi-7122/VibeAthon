@@ -17,7 +17,7 @@ import { BackgroundMusic } from './components/BackgroundMusic'
 export function App() {
   const [showSuitupIntro, setShowSuitupIntro] = useState(true)
 
-  // Warm up and unlock Web Audio context on any natural presence
+  // Warm up and unlock Web Audio context on user activation
   useEffect(() => {
     const unlock = () => {
       try {
@@ -33,8 +33,8 @@ export function App() {
       }
     }
 
-    const events = ['mousemove', 'pointermove', 'scroll', 'wheel', 'touchstart', 'keydown', 'click']
-    events.forEach((e) => window.addEventListener(e, unlock, { once: true, passive: true }))
+    const events = ['pointerdown', 'touchstart', 'keydown', 'click']
+    events.forEach((e) => window.addEventListener(e, unlock, { passive: true }))
     return () => events.forEach((e) => window.removeEventListener(e, unlock))
   }, [])
 

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { Timer } from 'lucide-react'
 import { HACKATHON_DATA } from '../data/hackathon'
+import { useStarkAudio } from '../hooks/useStarkAudio'
 import './LaunchCountdown.css'
 
 // Launch time carries a fixed IST offset, so the countdown targets the same
@@ -69,6 +70,8 @@ function Digits({ value }) {
 export function LaunchCountdown() {
   const [now, setNow] = useState(() => Date.now())
   const [hovered, setHovered] = useState(null)
+  const [pinged, setPinged] = useState(false)
+  const { playCommandConfirm, speakJarvis } = useStarkAudio()
 
   // Tick on each whole second so the digits change together
   useEffect(() => {
@@ -94,6 +97,33 @@ export function LaunchCountdown() {
   // Outer ring fills once per minute
   const minuteProgress = phase === 'complete' ? 1 : (60 - t.seconds) / 60
 
+  const announce = () => {
+    playCommandConfirm()
+    setPinged(true)
+    setTimeout(() => setPinged(false), 1200)
+
+    if (phase === 'complete') {
+      speakJarvis('Hi Sir, the build raid is complete. All mission objectives achieved.')
+    } else if (phase === 'live') {
+      const parts = [
+        t.hours > 0 && `${t.hours} ${t.hours === 1 ? 'hour' : 'hours'}`,
+        t.minutes > 0 && `${t.minutes} ${t.minutes === 1 ? 'minute' : 'minutes'}`,
+        `${t.seconds} ${t.seconds === 1 ? 'second' : 'seconds'}`,
+      ].filter(Boolean)
+      const formattedParts = parts.length === 1 ? parts[0] : parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1]
+      speakJarvis(`Hi Sir, the raid is currently live. ${formattedParts} remaining.`)
+    } else {
+      const parts = [
+        t.days > 0 && `${t.days} ${t.days === 1 ? 'day' : 'days'}`,
+        t.hours > 0 && `${t.hours} ${t.hours === 1 ? 'hour' : 'hours'}`,
+        t.minutes > 0 && `${t.minutes} ${t.minutes === 1 ? 'minute' : 'minutes'}`,
+        `${t.seconds} ${t.seconds === 1 ? 'second' : 'seconds'}`,
+      ].filter(Boolean)
+      const formattedParts = parts.length === 1 ? parts[0] : parts.slice(0, -1).join(', ') + ' and ' + parts[parts.length - 1]
+      speakJarvis(`Hi Sir, launch date is Sunday, October 4th, 2026. There are ${formattedParts} until launch.`)
+    }
+  }
+
   return (
     <div className="countdown">
       {/* Header */}
@@ -108,8 +138,14 @@ export function LaunchCountdown() {
         </span>
       </div>
 
-      {/* Arc reactor (decorative) */}
-      <div className="countdown__reactor" aria-hidden="true">
+      {/* Arc reactor: click for JARVIS status */}
+      <button
+        type="button"
+        className={`countdown__reactor ${pinged ? 'is-pinged' : ''}`}
+        onClick={announce}
+        aria-label="Ask JARVIS for launch countdown"
+        title="Tap to ask JARVIS for launch status"
+      >
         <svg viewBox="0 0 120 120" aria-hidden="true">
           <defs>
             <radialGradient id="reactor-core" cx="50%" cy="50%" r="50%">
@@ -167,7 +203,8 @@ export function LaunchCountdown() {
           <circle cx="60" cy="60" r="15" fill="url(#reactor-core)" className="countdown__reactor-core" />
           <circle cx="60" cy="60" r="5" className="countdown__reactor-heart" />
         </svg>
-      </div>
+        <span className="countdown__reactor-hint">Tap for JARVIS status</span>
+      </button>
 
       {/* Digits */}
       <div className="countdown__grid" role="timer" aria-live="off" aria-label={`${t.days} days ${t.hours} hours ${t.minutes} minutes ${t.seconds} seconds`}>

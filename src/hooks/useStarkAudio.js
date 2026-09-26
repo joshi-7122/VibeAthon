@@ -62,17 +62,33 @@ export function useStarkAudio() {
   // JARVIS voice synthesis for command confirmation  
   const speakJarvis = useCallback((text) => {
     try {
-      if (!window.speechSynthesis) return
+      if (typeof window === 'undefined' || !window.speechSynthesis) return
+      window.speechSynthesis.cancel()
       const utterance = new SpeechSynthesisUtterance(text)
       utterance.rate = 0.95
       utterance.pitch = 0.9
-      utterance.volume = 0.7
-      // Try to find a British English voice
-      const voices = window.speechSynthesis.getVoices()
-      const britishVoice = voices.find(v => 
-        v.lang === 'en-GB' || v.name.includes('British') || v.name.includes('Daniel')
-      )
-      if (britishVoice) utterance.voice = britishVoice
+      utterance.volume = 1.0
+      
+      const setBestVoice = () => {
+        const voices = window.speechSynthesis.getVoices()
+        if (!voices || voices.length === 0) return
+        const preferredVoice = voices.find(v => 
+          (v.lang === 'en-GB' || v.lang.startsWith('en-GB')) ||
+          v.name.toLowerCase().includes('daniel') ||
+          v.name.toLowerCase().includes('british') ||
+          v.name.toLowerCase().includes('oliver') ||
+          v.name.toLowerCase().includes('george')
+        ) || voices.find(v => v.lang.startsWith('en'))
+        if (preferredVoice) utterance.voice = preferredVoice
+      }
+
+      setBestVoice()
+      if (!utterance.voice && window.speechSynthesis.onvoiceschanged !== undefined) {
+        window.speechSynthesis.onvoiceschanged = () => {
+          setBestVoice()
+        }
+      }
+
       window.speechSynthesis.speak(utterance)
     } catch {
       // Silently fail

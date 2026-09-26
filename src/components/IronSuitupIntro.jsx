@@ -24,6 +24,7 @@ export function IronSuitupIntro({ onComplete }) {
   const [isFlashing, setIsFlashing] = useState(false)
   const [progress, setProgress] = useState(0)
   const [currentStepIndex, setCurrentStepIndex] = useState(0)
+  const [audioEngaged, setAudioEngaged] = useState(false)
   const hasAutoLaunched = useRef(false)
   const canvasRef = useRef(null)
 
@@ -163,6 +164,7 @@ export function IronSuitupIntro({ onComplete }) {
     <AnimatePresence>
       {!isExiting && (
         <motion.div
+          onPointerDown={() => setAudioEngaged(true)}
           className="fixed inset-0 z-[99999] bg-[#050708] text-white flex flex-col justify-between overflow-hidden select-none"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.1, filter: 'blur(20px)' }}
@@ -200,6 +202,16 @@ export function IronSuitupIntro({ onComplete }) {
                   VIBATHON OS // ARC REACTOR CORE INGESTION
                 </div>
               </div>
+            </div>
+
+            <div
+              className={`font-mono text-[10px] tracking-widest uppercase transition-all px-3 py-1.5 border select-none ${
+                audioEngaged
+                  ? 'border-[#3ee08f]/50 text-[#3ee08f] bg-[#3ee08f]/10 shadow-[0_0_10px_rgba(62,224,143,0.3)]'
+                  : 'border-[#00ADEF]/40 text-[#00ADEF] bg-[#00ADEF]/10 animate-pulse'
+              }`}
+            >
+              {audioEngaged ? '✓ AUDIO UPLINK READY' : '⚡ TAP SCREEN TO ENGAGE AUDIO'}
             </div>
           </div>
 

@@ -33,6 +33,8 @@ export function Hero({ introDone = true }) {
   const loopRef = useRef(null)
   const cleanupsRef = useRef([])
   const [loopPlaying, setLoopPlaying] = useState(false)
+  const [audioBlocked, setAudioBlocked] = useState(false)
+  const [audioPlaying, setAudioPlaying] = useState(false)
   // Hero text stays hidden while the first video plays, then animates in
   const [textReady, setTextReady] = useState(false)
   const revealText = () => setTextReady(true)
@@ -41,7 +43,6 @@ export function Hero({ introDone = true }) {
   const startLoop = () => cleanupsRef.current.push(playBackdrop(loopRef.current))
 
   const audioRef = useRef(null)
-  const audioStartedRef = useRef(false)
   const videoStartRef = useRef(0)
 
   const playAudioFrom = useCallback((offset = 0) => {
@@ -49,61 +50,69 @@ export function Hero({ introDone = true }) {
     if (!audio) return Promise.reject(new Error('no audio'))
     audio.muted = false
     audio.volume = 1.0
-    audio.currentTime = offset
-    return audio.play()
+    if (Math.abs(audio.currentTime - offset) > 0.3) {
+      try {
+        audio.currentTime = offset
+      } catch {
+        // ignore
+      }
+    }
+    return audio.play().then(() => {
+      setAudioPlaying(true)
+      setAudioBlocked(false)
+    })
   }, [])
 
   // Automatically start audio without requiring any user click
   const startAudio = useCallback(() => {
     const audio = audioRef.current
     if (!audio) return
-    if (audioStartedRef.current) return
 
-    audioStartedRef.current = true
     if (!videoStartRef.current) {
       videoStartRef.current = performance.now()
     }
 
+    const currentOffset =
+      videoRef.current && !videoRef.current.paused && !videoRef.current.ended
+        ? videoRef.current.currentTime
+        : 0
+
     // Try playing immediately
-    playAudioFrom(0).catch(() => {
-      // If the browser strictly pauses unmuted autoplay on the initial tick,
-      // trigger playback automatically on ANY natural presence (cursor movement, hover, scroll)
-      const passiveTriggers = [
-        'mousemove',
-        'pointermove',
-        'mouseenter',
-        'wheel',
-        'scroll',
-        'touchstart',
-        'touchmove',
-        'keydown',
-        'focus',
-        'click',
-      ]
+    playAudioFrom(currentOffset).catch(() => {
+      setAudioBlocked(true)
+      // If browser blocked unmuted autoplay due to policy, listen for the first user activation anywhere on window
+      const activationEvents = ['pointerdown', 'mousedown', 'touchstart', 'keydown', 'click']
 
-      const handlePassivePresence = () => {
-        passiveTriggers.forEach((evt) => window.removeEventListener(evt, handlePassivePresence))
-
+      const handleUserActivation = () => {
         const el = audioRef.current
-        if (!el) return
+        if (!el || el.ended) {
+          activationEvents.forEach((evt) => window.removeEventListener(evt, handleUserActivation))
+          setAudioBlocked(false)
+          return
+        }
 
         let offset = 0
         if (videoRef.current && !videoRef.current.paused && !videoRef.current.ended) {
           offset = videoRef.current.currentTime
         } else if (videoStartRef.current) {
           const elapsed = (performance.now() - videoStartRef.current) / 1000
-          if (elapsed >= 6.5) return
+          if (elapsed >= 6.5) {
+            activationEvents.forEach((evt) => window.removeEventListener(evt, handleUserActivation))
+            setAudioBlocked(false)
+            return
+          }
           offset = elapsed
         }
 
-        el.muted = false
-        el.volume = 1.0
-        el.currentTime = offset
-        el.play().catch(() => {})
+        playAudioFrom(offset)
+          .then(() => {
+            activationEvents.forEach((evt) => window.removeEventListener(evt, handleUserActivation))
+          })
+          .catch(() => {})
       }
 
-      passiveTriggers.forEach((evt) =>
-        window.addEventListener(evt, handlePassivePresence, { passive: true, once: true })
+      activationEvents.forEach((evt) =>
+        window.addEventListener(evt, handleUserActivation, { passive: true })
       )
     })
   }, [playAudioFrom])
@@ -111,7 +120,10 @@ export function Hero({ introDone = true }) {
   // First video is running: start its audio and begin fetching the loop
   // video in the background so it's ready when the first one ends
   const handleFirstVideoPlaying = useCallback(() => {
-    startAudio()
+    const audio = audioRef.current
+    if (audio && (audio.paused || audio.currentTime === 0)) {
+      startAudio()
+    }
     const loop = loopRef.current
     if (loop && loop.preload !== 'auto') {
       loop.preload = 'auto'
@@ -303,6 +315,25 @@ export function Hero({ introDone = true }) {
           <i />
         </motion.div>
       </div>
+
+      {/* Floating Stark audio activation button if browser autoplay was blocked */}
+      {audioBlocked && !audioPlaying && (
+        <motion.button
+          type="button"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          exit={{ opacity: 0, scale: 0.9 }}
+          onClick={(e) => {
+            e.stopPropagation()
+            playAudioFrom(videoRef.current?.currentTime || 0).catch(() => {})
+          }}
+          className="absolute bottom-6 right-6 z-30 flex items-center gap-2.5 px-4 py-2.5 bg-[#050708]/90 border border-[#00ADEF]/60 text-[#00ADEF] font-mono text-xs uppercase tracking-widest backdrop-blur-md shadow-[0_0_20px_rgba(0,173,239,0.5)] cursor-pointer hover:bg-[#00ADEF]/20 hover:border-[#00ADEF] transition-all rounded"
+          aria-label="Activate Stark Audio"
+        >
+          <span className="w-2.5 h-2.5 rounded-full bg-[#00ADEF] animate-ping" />
+          <span>⚡ TAP TO INITIALIZE AUDIO</span>
+        </motion.button>
+      )}
     </section>
   )
 }
