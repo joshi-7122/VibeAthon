@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { ArrowUpRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { HACKATHON_DATA } from '../data/hackathon'
@@ -25,8 +25,7 @@ function playBackdrop(video, onBlocked) {
   return () => {}
 }
 
-// Theme audio that plays alongside the first hero video (it runs ~6.5s, so
-// it carries on for a few seconds over the looping HUD video)
+// Theme audio that plays alongside the first hero video
 const INTRO_AUDIO = '/audio/hero-intro.m4a'
 
 export function Hero({ introDone = true }) {
@@ -45,68 +44,141 @@ export function Hero({ introDone = true }) {
   const audioStartedRef = useRef(false)
   const videoStartRef = useRef(0)
 
-  const playAudioFrom = (offset) => {
+  const playAudioFrom = useCallback((offset = 0) => {
     const audio = audioRef.current
     if (!audio) return Promise.reject(new Error('no audio'))
+    audio.muted = false
+    audio.volume = 1.0
     audio.currentTime = offset
     return audio.play()
-  }
+  }, [])
 
-  // Start with the first video. If the browser blocks sound until interaction,
-  // we just let it fail silently instead of retrying on click.
-  const startAudio = () => {
+  // Automatically start audio without requiring any user click
+  const startAudio = useCallback(() => {
+    const audio = audioRef.current
+    if (!audio) return
     if (audioStartedRef.current) return
+
     audioStartedRef.current = true
-    videoStartRef.current = performance.now()
+    if (!videoStartRef.current) {
+      videoStartRef.current = performance.now()
+    }
+
+    // Try playing immediately
     playAudioFrom(0).catch(() => {
-      // Just fail if browser blocks autoplay
+      // If the browser strictly pauses unmuted autoplay on the initial tick,
+      // trigger playback automatically on ANY natural presence (cursor movement, hover, scroll)
+      const passiveTriggers = [
+        'mousemove',
+        'pointermove',
+        'mouseenter',
+        'wheel',
+        'scroll',
+        'touchstart',
+        'touchmove',
+        'keydown',
+        'focus',
+        'click',
+      ]
+
+      const handlePassivePresence = () => {
+        passiveTriggers.forEach((evt) => window.removeEventListener(evt, handlePassivePresence))
+
+        const el = audioRef.current
+        if (!el) return
+
+        let offset = 0
+        if (videoRef.current && !videoRef.current.paused && !videoRef.current.ended) {
+          offset = videoRef.current.currentTime
+        } else {
+          const elapsed = (performance.now() - videoStartRef.current) / 1000
+          offset = elapsed < 6.5 ? elapsed : 0
+        }
+
+        el.muted = false
+        el.volume = 1.0
+        el.currentTime = offset
+        el.play().catch(() => {})
+      }
+
+      passiveTriggers.forEach((evt) =>
+        window.addEventListener(evt, handlePassivePresence, { passive: true, once: true })
+      )
     })
-  }
+  }, [playAudioFrom])
 
   // First video is running: start its audio and begin fetching the loop
   // video in the background so it's ready when the first one ends
-  const handleFirstVideoPlaying = () => {
+  const handleFirstVideoPlaying = useCallback(() => {
     startAudio()
     const loop = loopRef.current
     if (loop && loop.preload !== 'auto') {
       loop.preload = 'auto'
       loop.load()
     }
-  }
+  }, [startAudio])
 
-  // First video finished (or failed): reveal the text and move on to the loop
-  const handleFirstVideoDone = () => {
+  // First video finished (or failed): stop audio immediately, reveal text and start loop
+  const handleFirstVideoDone = useCallback(() => {
+    if (audioRef.current) {
+      audioRef.current.pause()
+      audioRef.current.currentTime = 0
+    }
     revealText()
     startLoop()
-  }
+  }, [])
 
   // Mark both videos muted/inline before they load, and clean up on unmount
   useEffect(() => {
-    prepareVideo(videoRef.current)
-    prepareVideo(loopRef.current)
+    const video = videoRef.current
+    const loop = loopRef.current
+    const audio = audioRef.current
+    prepareVideo(video)
+    prepareVideo(loop)
     const cleanups = cleanupsRef.current
-    return () => cleanups.forEach((fn) => fn())
+    return () => {
+      cleanups.forEach((fn) => fn())
+      if (audio) {
+        audio.pause()
+      }
+    }
   }, [])
 
-  // Play the intro video once, after the suit-up intro has cleared,
-  // then crossfade to the HUD video, which loops for the rest of the visit.
+  // Play the intro video and auto-start companion audio once suit-up intro clears
   useEffect(() => {
     if (!introDone) return
     // If autoplay is blocked, show the text right away instead of an empty hero
     cleanupsRef.current.push(playBackdrop(videoRef.current, () => setTextReady(true)))
+    
+    // Auto-trigger the intro audio immediately without requiring a click
+    startAudio()
+
     // Safety net in case the video stalls and never ends
-    const fallback = setTimeout(() => setTextReady(true), 8000)
+    const fallback = setTimeout(() => {
+      setTextReady(true)
+      if (audioRef.current) {
+        audioRef.current.pause()
+      }
+    }, 8000)
     return () => clearTimeout(fallback)
-  }, [introDone])
+  }, [introDone, startAudio])
 
   // Browsers pause silent videos in background tabs and don't always resume;
   // pick up where we left off when the tab becomes visible again.
   useEffect(() => {
     const onVisible = () => {
-      if (document.visibilityState !== 'visible') return
+      if (document.visibilityState !== 'visible') {
+        audioRef.current?.pause()
+        return
+      }
       const first = videoRef.current
       if (loopPlaying) loopRef.current?.play().catch(() => {})
-      else if (introDone && first && !first.ended) first.play().catch(() => {})
+      else if (introDone && first && !first.ended) {
+        first.play().catch(() => {})
+        if (audioRef.current && !audioRef.current.ended) {
+          audioRef.current.play().catch(() => {})
+        }
+      }
     }
     document.addEventListener('visibilitychange', onVisible)
     return () => document.removeEventListener('visibilitychange', onVisible)
@@ -161,8 +233,11 @@ export function Hero({ introDone = true }) {
         />
       </div>
 
-
-      <audio ref={audioRef} src={INTRO_AUDIO} preload="auto" />
+      <audio
+        ref={audioRef}
+        src={INTRO_AUDIO}
+        preload="auto"
+      />
 
       {/* Overlay Scanlines */}
       <div

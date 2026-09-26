@@ -85,7 +85,7 @@ export function AboutSection() {
               </div>
               <div className="p-4 bg-[#050708] border border-[#00ADEF]/20">
                 <div className="font-sans font-bold text-[#00ADEF] text-lg mb-1">SQUAD BASED</div>
-                <div className="font-mono text-[10px] text-[#8b9aa6] uppercase tracking-wider">1-3 Members</div>
+                <div className="font-mono text-[10px] text-[#8b9aa6] uppercase tracking-wider">2-3 Members</div>
               </div>
             </div>
           </div>

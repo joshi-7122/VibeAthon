@@ -128,7 +128,7 @@ HACKATHON_DATA.faqs = [
   },
   {
     question: 'What is the team size?',
-    answer: 'Teams of 1 to 3 members. Fly solo or suit up with up to two teammates.',
+    answer: 'Teams of 2 to 3 members. Suit up with one or two teammates.',
   },
   {
     question: 'Is there a registration fee?',

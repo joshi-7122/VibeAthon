@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { IronSuitupIntro } from './components/IronSuitupIntro'
 import { StarkCursor } from './components/StarkCursor'
 import { Header } from './components/Header'
@@ -16,6 +16,27 @@ import { BackgroundMusic } from './components/BackgroundMusic'
 
 export function App() {
   const [showSuitupIntro, setShowSuitupIntro] = useState(true)
+
+  // Warm up and unlock Web Audio context on any natural presence
+  useEffect(() => {
+    const unlock = () => {
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext
+        if (AudioCtx) {
+          const ctx = new AudioCtx()
+          if (ctx.state === 'suspended') {
+            ctx.resume().catch(() => {})
+          }
+        }
+      } catch {
+        // ignore
+      }
+    }
+
+    const events = ['mousemove', 'pointermove', 'scroll', 'wheel', 'touchstart', 'keydown', 'click']
+    events.forEach((e) => window.addEventListener(e, unlock, { once: true, passive: true }))
+    return () => events.forEach((e) => window.removeEventListener(e, unlock))
+  }, [])
 
   return (
     <div className="stark-page">

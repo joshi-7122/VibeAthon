@@ -163,7 +163,8 @@ export function IronSuitupIntro({ onComplete }) {
     <AnimatePresence>
       {!isExiting && (
         <motion.div
-          className="fixed inset-0 z-[99999] bg-[#050708] text-white flex flex-col justify-between overflow-hidden select-none"
+          onClick={handleSuitupLaunch}
+          className="fixed inset-0 z-[99999] bg-[#050708] text-white flex flex-col justify-between overflow-hidden select-none cursor-pointer"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, scale: 1.1, filter: 'blur(20px)' }}
           transition={{ duration: 0.6, ease: 'easeInOut' }}
@@ -203,10 +204,13 @@ export function IronSuitupIntro({ onComplete }) {
             </div>
 
             <button
-              onClick={handleSuitupLaunch}
+              onClick={(e) => {
+                e.stopPropagation()
+                handleSuitupLaunch()
+              }}
               className="text-[#8b9aa6] hover:text-[#00ADEF] transition-colors border border-[#8b9aa6]/30 px-3 py-1.5 text-[10px] tracking-widest uppercase cursor-pointer"
             >
-              [ SKIP INTRO ]
+              [ SKIP INTRO / INITIALIZE ]
             </button>
           </div>
 
