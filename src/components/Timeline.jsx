@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react'
 import { motion, useInView, useScroll, useTransform } from 'framer-motion'
-import { FileText, Flag, Radar, ScanSearch, ShieldCheck, Trophy, Wrench } from 'lucide-react'
+import { Coffee, FileText, Flag, Radar, ScanSearch, ShieldCheck, Trophy, Wrench } from 'lucide-react'
 import './Timeline.css'
 
 // 25 Sep – 02 Oct: PPT Submission & Evaluation.
 // 4 October: 8-Hour Build Raid & Evaluation Rounds.
 // kind: 'ppt' = PPT submission phase, 'reveal' = problem statement drop, 'eval' = evaluation round,
-// 'final' = results; everything else is a regular checkpoint.
+// 'break' = 1-hour intermission/recharge, 'final' = results; everything else is a regular checkpoint.
 const MILESTONES = [
   {
     time: '25 SEP 26, 12:00 PM → 02 OCT 26, 11:59 PM',
@@ -52,11 +52,20 @@ const MILESTONES = [
     kind: 'eval',
   },
   {
-    time: '04 OCT 26, 4:30 PM',
+    time: '04 OCT 26, 2:30 PM → 3:30 PM',
+    label: 'Power Recharge // Intermission',
+    status: '1-HR BREAK',
+    title: 'LUNCH & RECHARGE BREAK',
+    desc: 'A 1-hour break from 2:30 PM to 3:30 PM. Refuel, collaborate with peers, and recharge before the final evaluation sprint.',
+    icon: Coffee,
+    kind: 'break',
+  },
+  {
+    time: '04 OCT 26, 4:00 PM',
     label: 'Evaluation — Round 02',
     status: 'FINAL CHECK',
     title: 'EVALUATION ROUND 2 (FINAL)',
-    desc: 'The final round of evaluation at 4:30 PM. Present your live build to the judges.',
+    desc: 'The final round of evaluation begins at 4:00 PM. Present your live build and pitch to the judges.',
     icon: ShieldCheck,
     kind: 'eval',
   },

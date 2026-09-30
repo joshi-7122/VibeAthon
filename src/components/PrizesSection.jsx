@@ -9,13 +9,13 @@ const armors = [
     name: 'Mark XLII',
     color: '#FFD700',
     icon: Trophy,
-    rank: '1st Prize',
-    amount: 'To Be Announced',
+    rank: 'Winner',
+    amount: '₹3,000',
     specs: {
       cpu: '4.8GHz Neural Compute',
       ram: '128TB ARC Memory',
       power: 'Arc Reactor Gen 3',
-      status: 'PREHENSILE ONLINE'
+      status: 'CHAMPION ONLINE'
     }
   },
   {
@@ -23,8 +23,8 @@ const armors = [
     name: 'Hulkbuster',
     color: '#C0C0C0',
     icon: Award,
-    rank: '2nd Prize',
-    amount: 'To Be Announced',
+    rank: '1st Runner Up',
+    amount: '₹2,000',
     specs: {
       cpu: '12.4GHz Brute Force Array',
       ram: '512TB Gamma Buffer',
@@ -37,8 +37,8 @@ const armors = [
     name: 'Mark L',
     color: '#CD7F32',
     icon: ShieldCheck,
-    rank: '3rd Prize',
-    amount: 'To Be Announced',
+    rank: '2nd Runner Up',
+    amount: '₹1,000',
     specs: {
       cpu: '8.2GHz Nano-Compute Core',
       ram: '256TB Bleeding Edge',
@@ -51,8 +51,8 @@ const armors = [
     name: 'Mark V',
     color: '#00ADEF',
     icon: Gift,
-    rank: 'Bonus Rewards',
-    amount: 'Exciting Goodies',
+    rank: 'Special Mentions',
+    amount: 'Goodies & Perks',
     specs: {
       cpu: '2.1GHz Emergency Core',
       ram: '32TB Suitcase Deploy',
@@ -172,8 +172,8 @@ const PrizesSection = () => {
           </h2>
         </div>
         <p className="section-note">
-          Rewards for the builders who suit up.<br />
-          Full prize details announced soon.
+          Rewards for the top builders who suit up.<br />
+          ₹6,000 Total Prize Pool + Certificates &amp; Goodies.
         </p>
       </div>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
