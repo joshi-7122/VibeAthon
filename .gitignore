@@ -24,6 +24,6 @@ dist-ssr
 *.sw?
 
 # Large media files (exceed GitHub's 100MB limit)
-*.mp4
 *.mov
 *.avi
+1790323892488519.mp4

@@ -204,21 +204,20 @@ export function Hero({ introDone = true }) {
           so the full frame is always visible (no cropping). */}
       <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
         <video
-          src="/videos/hero-loop.mp4"
           ref={loopRef}
           muted
           loop
           playsInline
-          // 86 MB: don't fetch it while the loader and first video need the
-          // bandwidth; warmLoop() starts it once the first video is playing
-          preload="none"
+          preload="metadata"
           onPlaying={() => setLoopPlaying(true)}
           // Mirrored horizontally so the HUD graphics sit away from the headline
           style={{ transform: 'scaleX(-1)' }}
           className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-75' : 'opacity-0'}`}
-        />
+        >
+          <source src="/videos/hero-loop.mp4" type="video/mp4" />
+          <source src="https://raw.githubusercontent.com/joshi-7122/VibeAthon/main/public/videos/hero-loop.mp4" type="video/mp4" />
+        </video>
         <video
-          src="/videos/hero-bg.mp4"
           poster="/videos/hero-poster.jpg"
           ref={videoRef}
           muted
@@ -228,7 +227,10 @@ export function Hero({ introDone = true }) {
           onEnded={handleFirstVideoDone}
           onError={handleFirstVideoDone}
           className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-0' : 'opacity-75'}`}
-        />
+        >
+          <source src="/videos/hero-bg.mp4" type="video/mp4" />
+          <source src="https://raw.githubusercontent.com/joshi-7122/VibeAthon/main/public/videos/hero-bg.mp4" type="video/mp4" />
+        </video>
         {/* Dark gradient overlay */}
         <div
           className="absolute inset-0"
