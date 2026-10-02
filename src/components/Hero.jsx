@@ -3,6 +3,10 @@ import { ArrowUpRight } from 'lucide-react'
 import { motion } from 'framer-motion'
 import { HACKATHON_DATA } from '../data/hackathon'
 import { useTypewriter } from '../hooks/useTypewriter'
+// Imported (not served from /public) so the build gives them content-hashed
+// URLs: a browser or CDN can never hold on to a stale or 404'd copy
+import heroBgVideo from '../assets/videos/hero-bg.mp4'
+import heroLoopVideo from '../assets/videos/hero-loop.mp4'
 
 
 // Muted, inline playback is what every browser allows to autoplay. React only
@@ -214,8 +218,8 @@ export function Hero({ introDone = true }) {
           style={{ transform: 'scaleX(-1)' }}
           className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-75' : 'opacity-0'}`}
         >
-          <source src="/videos/hero-loop.mp4" type="video/mp4" />
-          <source src="https://raw.githubusercontent.com/joshi-7122/VibeAthon/main/public/videos/hero-loop.mp4" type="video/mp4" />
+          <source src={heroLoopVideo} type="video/mp4" />
+          <source src="https://raw.githubusercontent.com/joshi-7122/VibeAthon/main/src/assets/videos/hero-loop.mp4" type="video/mp4" />
         </video>
         <video
           poster="/videos/hero-poster.jpg"
@@ -228,8 +232,14 @@ export function Hero({ introDone = true }) {
           onError={handleFirstVideoDone}
           className={`absolute inset-0 w-full h-full object-contain object-center transition-opacity duration-[1500ms] ease-in-out ${loopPlaying ? 'opacity-0' : 'opacity-75'}`}
         >
-          <source src="/videos/hero-bg.mp4" type="video/mp4" />
-          <source src="https://raw.githubusercontent.com/joshi-7122/VibeAthon/main/public/videos/hero-bg.mp4" type="video/mp4" />
+          <source src={heroBgVideo} type="video/mp4" />
+          {/* <video> never fires onError for <source> children; an error on the
+              last source means every source failed */}
+          <source
+            src="https://raw.githubusercontent.com/joshi-7122/VibeAthon/main/src/assets/videos/hero-bg.mp4"
+            type="video/mp4"
+            onError={handleFirstVideoDone}
+          />
         </video>
         {/* Dark gradient overlay */}
         <div

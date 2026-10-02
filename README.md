@@ -50,7 +50,7 @@ The finished static site is written to `dist/`. Upload that folder to any static
 | FAQs | `src/components/FaqSection.jsx` (questions live in `src/data/hackathon.js`) |
 | Footer / contact | `src/components/Footer.jsx` |
 | Iron Man gauntlet cursor | `src/components/StarkCursor.jsx` |
-| Hero videos | `public/videos/hero-bg.mp4` (plays once), `public/videos/hero-loop.mp4` (loops), `public/videos/hero-poster.jpg` (shown until video starts) |
+| Hero videos | `src/assets/videos/hero-bg.mp4` (plays once), `src/assets/videos/hero-loop.mp4` (loops), `public/videos/hero-poster.jpg` (shown until video starts) |
 | Audio | `public/audio/hero-intro.m4a` (plays with the first hero video), `public/audio/background-music.mp3` (loops quietly for the whole visit) |
 
 ## Browser support
