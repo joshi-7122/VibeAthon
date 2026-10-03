@@ -78,6 +78,32 @@
   color: #00ADEF;
 }
 
+.site-footer__partner {
+  margin-top: 16px;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  color: #8b9aa6;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.site-footer__partner-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: #00ADEF;
+  font-weight: 700;
+  text-decoration: none;
+  transition: color 0.2s ease, text-shadow 0.2s ease;
+}
+
+.site-footer__partner-link:hover {
+  color: #00E5FF;
+  text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
+}
+
 /* Live mission status: mini arc reactor + event phase */
 .mission-status {
   display: inline-flex;

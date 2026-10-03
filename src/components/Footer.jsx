@@ -93,6 +93,19 @@ export function Footer() {
             Organized by <span>{contact.organizers}</span>
           </p>
           <SocialLinks />
+          <p className="site-footer__partner">
+            Registration Platform Partner:{' '}
+            <a
+              href="https://www.instagram.com/unstop.world/?hl=en"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="site-footer__partner-link"
+              aria-label="UNSTOP on Instagram"
+            >
+              <span>UNSTOP</span>
+              <InstagramIcon className="w-3.5 h-3.5" />
+            </a>
+          </p>
         </div>
 
         {/* Quick links */}
